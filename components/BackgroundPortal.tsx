@@ -35,11 +35,13 @@ export default function BackgroundPortal({ children, usePortalOnMobile }: Props)
       mq.addEventListener("change", update);
       return () => mq.removeEventListener("change", update);
     } else {
-      // legacy Safari (addListener/removeListener not in MediaQueryList type)
-      // @ts-expect-error legacy Safari MediaQueryList
-      mq.addListener(update);
-      // @ts-expect-error legacy Safari MediaQueryList
-      return () => mq.removeListener(update);
+      // legacy Safari fallback
+      const mql = mq as unknown as {
+        addListener: (cb: () => void) => void;
+        removeListener: (cb: () => void) => void;
+      };
+      mql.addListener(update);
+      return () => mql.removeListener(update);
     }
   }, []);
 
