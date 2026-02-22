@@ -100,7 +100,7 @@ export default function CompanyBackground() {
       {desktopItems.map((item, i) => (
         <div
           key={i}
-          className="absolute will-change-transform"
+          className="absolute md:will-change-transform"
           style={{
             left: item.x,
             top: item.y,

@@ -456,7 +456,7 @@ export default function BackgroundParadogs({
           <div
             key={i}
             {...(isAbout ? { "data-about-bg": "true" as const } : {})}
-            className="absolute will-change-transform"
+            className="absolute md:will-change-transform"
             style={{
               left: usePx ? item.x : `${item.x}%`,
               top: usePx ? item.y : `${item.y}%`,
