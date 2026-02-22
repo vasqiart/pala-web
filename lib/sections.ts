@@ -260,9 +260,7 @@ export const COMPANY_SECTIONS: PageSections = [
     id: "company-overview",
     title: "Palantir Technologies",
     subtitle: "Introduction",
-    description: `（仮）Palantir Technologies Inc. の企業解説です。
-
-ここに本文を追加します。`,
+    description: "coming sooooon.",
     ctaLabel: "TOP",
     ctaHref: "/",
     initialRotation: baseRotation,
