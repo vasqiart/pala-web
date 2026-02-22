@@ -27,11 +27,11 @@ export default function ScrollSections({
 }: Props) {
   return (
     <main
-      className="relative min-h-screen w-full pt-16"
+      className="relative min-h-[100dvh] md:min-h-screen w-full pt-16"
       style={{ zIndex: 10 }}
     >
       {topSpacer && (
-        <div className="h-screen w-full shrink-0" aria-hidden />
+        <div className="h-[100dvh] md:h-screen w-full shrink-0" aria-hidden />
       )}
       {!topSpacer && pageTitle && (
         <header className="px-4 pb-6 pt-4 md:px-6 md:pt-6">
@@ -48,17 +48,16 @@ export default function ScrollSections({
           key={section.id}
           className={
             section.id === "summary"
-              ? "flex min-h-[100vh] items-start justify-center px-4 pb-2 pt-2 md:px-6 md:pb-3 md:pt-3"
+              ? "flex min-h-[calc(100dvh-72px)] md:min-h-[calc(100vh-72px)] items-start justify-center px-4 pb-2 pt-2 md:px-6 md:pb-3 md:pt-3"
               : index === 0 && pageTitle && !topSpacer
-                ? "flex min-h-[100vh] items-center justify-center px-4 pt-8 pb-20 md:px-6 md:py-24"
-                : "flex min-h-[100vh] items-center justify-center px-4 py-20 md:px-6 md:py-24"
+                ? "flex min-h-[100dvh] md:min-h-[100vh] items-center justify-center px-4 pt-8 pb-20 md:px-6 md:py-24"
+                : "flex min-h-[100dvh] md:min-h-[100vh] items-center justify-center px-4 py-20 md:px-6 md:py-24"
           }
-          style={{ minHeight: section.id === "summary" ? "calc(100vh - 72px)" : "100vh" }}
         >
           <div
             className={
               section.id === "summary"
-                ? "w-[92%] max-w-[1120px] h-auto min-h-[min(620px,calc(100vh-190px))] md:h-[min(620px,calc(100vh-190px))] md:max-h-[620px]"
+                ? "w-[92%] max-w-[1120px] h-auto min-h-[min(620px,calc(100dvh-190px))] md:min-h-[min(620px,calc(100vh-190px))] md:h-[min(620px,calc(100vh-190px))] md:max-h-[620px]"
                 : "w-[92%] max-w-4xl sm:w-[90%]" +
                   (markCardsForBackground && index === 0 ? " translate-x-3 md:translate-x-0" : "")
             }

@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useMemo, useState } from "react";
 import BackgroundParadogs from "@/components/BackgroundParadogs";
+import BackgroundPortal from "@/components/BackgroundPortal";
 import { COMPANY_BG_IMAGES } from "@/lib/companyBackgroundImages";
 
 type PlacedItem = {
@@ -85,13 +86,15 @@ export default function CompanyBackground() {
 
   if (!isDesktop) {
     return (
-      <BackgroundParadogs
-        imagePaths={COMPANY_BG_IMAGES}
-        count={COMPANY_BG_IMAGES.length}
-        placementMode="collisionFree"
-        sizeScale={1.12}
-        minCountMobile={16}
-      />
+      <BackgroundPortal usePortalOnMobile>
+        <BackgroundParadogs
+          imagePaths={COMPANY_BG_IMAGES}
+          count={COMPANY_BG_IMAGES.length}
+          placementMode="collisionFree"
+          sizeScale={1.12}
+          minCountMobile={16}
+        />
+      </BackgroundPortal>
     );
   }
 

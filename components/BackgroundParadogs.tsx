@@ -355,6 +355,7 @@ export default function BackgroundParadogs({
 }: Props) {
   const [collisionPositions, setCollisionPositions] = useState<PositionItem[] | null>(null);
   const seedRef = useRef(seed);
+  const lastWidthRef = useRef<number | null>(null);
 
   const runCollisionFree = useCallback(() => {
     const next = computeCollisionFreePositions(
@@ -381,17 +382,17 @@ export default function BackgroundParadogs({
     };
     rafId = requestAnimationFrame(runAfterPaint);
     const debounced = debounce(runCollisionFree, 180);
-    window.addEventListener("resize", debounced);
-    let ro: ResizeObserver | null = null;
-    const cardEl = document.querySelector("[data-about-card]");
-    if (typeof ResizeObserver !== "undefined" && cardEl) {
-      ro = new ResizeObserver(debounced);
-      ro.observe(cardEl);
-    }
+    if (lastWidthRef.current == null) lastWidthRef.current = window.innerWidth;
+    const onResize = () => {
+      const w = window.innerWidth;
+      if (lastWidthRef.current === w) return;
+      lastWidthRef.current = w;
+      debounced();
+    };
+    window.addEventListener("resize", onResize);
     return () => {
       cancelAnimationFrame(rafId);
-      window.removeEventListener("resize", debounced);
-      if (ro && cardEl) ro.unobserve(cardEl);
+      window.removeEventListener("resize", onResize);
     };
   }, [placementMode, runCollisionFree]);
 

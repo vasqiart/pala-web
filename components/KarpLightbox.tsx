@@ -44,9 +44,17 @@ export default function KarpLightbox({
 
   useEffect(() => {
     if (!open) return;
-    setMounted(false);
-    const t = requestAnimationFrame(() => setMounted(true));
-    return () => cancelAnimationFrame(t);
+    let raf1: number | null = null;
+    const raf2 = requestAnimationFrame(() => {
+      raf1 = requestAnimationFrame(() => {
+        setMounted(false);
+        setMounted(true);
+      });
+    });
+    return () => {
+      cancelAnimationFrame(raf2);
+      if (raf1 !== null) cancelAnimationFrame(raf1);
+    };
   }, [open]);
 
   useEffect(() => {

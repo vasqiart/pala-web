@@ -1,3 +1,4 @@
+import BackgroundPortal from "@/components/BackgroundPortal";
 import BackgroundParadogs from "@/components/BackgroundParadogs";
 import ScrollSections from "@/components/ScrollSections";
 import { ABOUT_BG_IMAGES } from "@/lib/aboutBackgroundImages";
@@ -9,13 +10,15 @@ const TOP_BG_COUNT = 16;
 export default function AboutPage() {
   return (
     <>
-      <BackgroundParadogs
-        imagePaths={ABOUT_BG_IMAGES}
-        count={TOP_BG_COUNT}
-        placementMode="collisionFree"
-        sizeScale={1.12}
-        minCountMobile={18}
-      />
+      <BackgroundPortal usePortalOnMobile>
+        <BackgroundParadogs
+          imagePaths={ABOUT_BG_IMAGES}
+          count={TOP_BG_COUNT}
+          placementMode="collisionFree"
+          sizeScale={1.12}
+          minCountMobile={18}
+        />
+      </BackgroundPortal>
       <div className="relative" style={{ zIndex: 10 }}>
         <ScrollSections
           sections={ABOUT_SECTIONS}

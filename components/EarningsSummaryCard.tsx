@@ -29,7 +29,6 @@ function RowCard({
 export default function EarningsSummaryCard({
   ctaLabel,
   ctaHref,
-  initialRotation,
   innerRotation,
 }: Props) {
   const VISIBLE_COUNT = 4;
@@ -143,7 +142,7 @@ export default function EarningsSummaryCard({
         <span className="text-gray-500">57%</span> でした。
       </RowCard>,
       <RowCard key={9} number={9}>
-        US commercial remaining deal value（"RDV"） は
+        US commercial remaining deal value（&quot;RDV&quot;） は
         <span className="text-xs text-gray-500">前年同期比</span>{" "}
         <span className="text-gray-500">+145%</span>、
         <span className="text-xs text-gray-500">前四半期比</span>{" "}
@@ -151,7 +150,7 @@ export default function EarningsSummaryCard({
         <span className="font-semibold text-gray-800">$4.38 billion（約¥6,789億円）</span> に拡大しました。
       </RowCard>,
       <RowCard key={10} number={10}>
-        US commercial total contract value（"TCV"） は過去最高の四半期となり、
+        US commercial total contract value（&quot;TCV&quot;） は過去最高の四半期となり、
         <span className="font-semibold text-gray-800">$1.34 billion（約¥2,077億円）</span>。
         <span className="text-xs text-gray-500">前年同期比</span>{" "}
         <span className="text-gray-500">+67%</span> でした。

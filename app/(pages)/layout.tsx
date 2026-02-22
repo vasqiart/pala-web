@@ -13,7 +13,7 @@ export default function PagesLayout({
   return (
     <LoadingGate>
       <Header />
-      <div className="relative min-h-screen" style={{ zIndex: 1 }}>
+      <div className="relative min-h-[100dvh] md:min-h-screen" style={{ zIndex: 1 }}>
         {children}
       </div>
     </LoadingGate>

@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useMemo, useState } from "react";
 import BackgroundParadogs from "@/components/BackgroundParadogs";
+import BackgroundPortal from "@/components/BackgroundPortal";
 import { EARNINGS_BG_IMAGES } from "@/lib/earningsBackgroundImages";
 
 type PlacedItem = {
@@ -84,13 +85,15 @@ export default function EarningsBackground() {
 
   if (!isDesktop) {
     return (
-      <BackgroundParadogs
-        imagePaths={EARNINGS_BG_IMAGES}
-        count={16}
-        placementMode="collisionFree"
-        sizeScale={1.12}
-        minCountMobile={16}
-      />
+      <BackgroundPortal usePortalOnMobile>
+        <BackgroundParadogs
+          imagePaths={EARNINGS_BG_IMAGES}
+          count={16}
+          placementMode="collisionFree"
+          sizeScale={1.12}
+          minCountMobile={16}
+        />
+      </BackgroundPortal>
     );
   }
 

@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useMemo, useState } from "react";
 import BackgroundParadogs from "@/components/BackgroundParadogs";
+import BackgroundPortal from "@/components/BackgroundPortal";
 import { SHARE_PRICE_BG_IMAGES } from "@/lib/sharePriceBackgroundImages";
 
 type PlacedItem = {
@@ -87,13 +88,15 @@ export default function SharePriceBackground() {
 
   if (!isDesktop) {
     return (
-      <BackgroundParadogs
-        imagePaths={SHARE_PRICE_BG_IMAGES}
-        count={SHARE_PRICE_BG_IMAGES.length}
-        placementMode="collisionFree"
-        sizeScale={1.12}
-        minCountMobile={17}
-      />
+      <BackgroundPortal usePortalOnMobile>
+        <BackgroundParadogs
+          imagePaths={SHARE_PRICE_BG_IMAGES}
+          count={SHARE_PRICE_BG_IMAGES.length}
+          placementMode="collisionFree"
+          sizeScale={1.12}
+          minCountMobile={17}
+        />
+      </BackgroundPortal>
     );
   }
 
