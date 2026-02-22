@@ -80,7 +80,7 @@ export default function Header() {
           </Link>
         ))}
         <a
-          href="https://x.com"
+          href="https://x.com/PLTR_Dog"
           target="_blank"
           rel="noopener noreferrer"
           className="ml-2 rounded-full bg-gray-800 px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
@@ -138,7 +138,7 @@ export default function Header() {
               </Link>
             ))}
             <a
-              href="https://x.com"
+              href="https://x.com/PLTR_Dog"
               target="_blank"
               rel="noopener noreferrer"
               className="mt-2 rounded-full bg-gray-800 px-4 py-3 text-center text-sm font-medium text-white"
