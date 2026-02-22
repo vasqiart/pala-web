@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import FeatureCardShell from "@/components/cards/FeatureCardShell";
 import { gsap } from "@/lib/gsap";
 import type { SectionItem } from "@/lib/sections";
@@ -32,12 +32,12 @@ export default function EarningsSummaryCard({
   initialRotation,
   innerRotation,
 }: Props) {
+  const VISIBLE_COUNT = 4;
   const summaryRotation = 0;
   const wrapperRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
-  const bodyAreaRef = useRef<HTMLDivElement>(null);
   const [isMdOrLarger, setIsMdOrLarger] = useState(true);
-  const [isInnerScrollEnabled, setInnerScrollEnabled] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 768px)");
@@ -48,14 +48,10 @@ export default function EarningsSummaryCard({
   }, []);
 
   useEffect(() => {
-    if (!isInnerScrollEnabled) return;
-    const onPointerDown = (e: PointerEvent) => {
-      if (bodyAreaRef.current?.contains(e.target as Node)) return;
-      setInnerScrollEnabled(false);
-    };
-    document.addEventListener("pointerdown", onPointerDown);
-    return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, [isInnerScrollEnabled]);
+    if (!isMdOrLarger && expanded && innerRef.current) {
+      innerRef.current.scrollIntoView({ block: "start", behavior: "auto" });
+    }
+  }, [expanded, isMdOrLarger]);
 
   useEffect(() => {
     if (typeof window === "undefined" || !wrapperRef.current || !innerRef.current) return;
@@ -95,6 +91,86 @@ export default function EarningsSummaryCard({
     return () => ctx.revert();
   }, [summaryRotation, innerRotation]);
 
+  const snapshotItems = useMemo(
+    () => [
+      <RowCard key={1} number={1}>
+        US revenue は<span className="text-xs text-gray-500">前年同期比</span>{" "}
+        <span className="text-gray-500">+93%</span>、<span className="text-xs text-gray-500">前四半期比</span>{" "}
+        <span className="text-gray-500">+22%</span> 増の{" "}
+        <span className="font-semibold text-gray-800">$1.08 billion（約¥1,674億円）</span> に拡大しました。
+      </RowCard>,
+      <RowCard key={2} number={2}>
+        US commercial revenue は<span className="text-xs text-gray-500">前年同期比</span>{" "}
+        <span className="text-gray-500">+137%</span>、<span className="text-xs text-gray-500">前四半期比</span>{" "}
+        <span className="text-gray-500">+28%</span> 増の{" "}
+        <span className="font-semibold text-gray-800">$507 million（約¥786億円）</span> に拡大しました。
+      </RowCard>,
+      <RowCard key={3} number={3}>
+        US government revenue は<span className="text-xs text-gray-500">前年同期比</span>{" "}
+        <span className="text-gray-500">+66%</span>、<span className="text-xs text-gray-500">前四半期比</span>{" "}
+        <span className="text-gray-500">+17%</span> 増の{" "}
+        <span className="font-semibold text-gray-800">$570 million（約¥884億円）</span> に拡大しました。
+      </RowCard>,
+      <RowCard key={4} number={4}>
+        <span className="block">
+          売上は<span className="text-xs text-gray-500">前年同期比</span>{" "}
+          <span className="text-gray-500">+70%</span>、<span className="text-xs text-gray-500">前四半期比</span>{" "}
+          <span className="text-gray-500">+19%</span> 増の{" "}
+          <span className="font-semibold text-gray-800">$1.41 billion（約¥2,186億円）</span> に拡大しました。
+        </span>
+        <span className="block text-gray-500">
+          <span className="block">
+            {"また Strategic Commercial Contracts を除くと、前年同期比 +72%、前四半期比 +19% でした。"}
+          </span>
+        </span>
+      </RowCard>,
+      <RowCard key={5} number={5}>
+        Rule of 40 スコアは <strong className="text-gray-800">127%</strong> でした。
+      </RowCard>,
+      <RowCard key={6} number={6}>
+        <span className="font-semibold text-gray-800">$1 million</span>以上 の案件を 180件、
+        <span className="font-semibold text-gray-800">$5 million</span>以上 を 84件、
+        <span className="font-semibold text-gray-800">$10 million</span>以上 を 61件 クローズしました。
+      </RowCard>,
+      <RowCard key={7} number={7}>
+        Adjusted free cash flow は{" "}
+        <span className="font-semibold text-gray-800">$791 million（約¥1,226億円）</span>、マージンは{" "}
+        <span className="text-gray-500">56%</span> でした。
+      </RowCard>,
+      <RowCard key={8} number={8}>
+        Adjusted operating income は{" "}
+        <span className="font-semibold text-gray-800">$798 million（約¥1,237億円）</span>、マージンは{" "}
+        <span className="text-gray-500">57%</span> でした。
+      </RowCard>,
+      <RowCard key={9} number={9}>
+        US commercial remaining deal value（"RDV"） は
+        <span className="text-xs text-gray-500">前年同期比</span>{" "}
+        <span className="text-gray-500">+145%</span>、
+        <span className="text-xs text-gray-500">前四半期比</span>{" "}
+        <span className="text-gray-500">+21%</span> 増の{" "}
+        <span className="font-semibold text-gray-800">$4.38 billion（約¥6,789億円）</span> に拡大しました。
+      </RowCard>,
+      <RowCard key={10} number={10}>
+        US commercial total contract value（"TCV"） は過去最高の四半期となり、
+        <span className="font-semibold text-gray-800">$1.34 billion（約¥2,077億円）</span>。
+        <span className="text-xs text-gray-500">前年同期比</span>{" "}
+        <span className="text-gray-500">+67%</span> でした。
+      </RowCard>,
+      <RowCard key={11} number={11}>
+        TCV は過去最高の四半期となり、
+        <span className="font-semibold text-gray-800">$4.26 billion（約¥6,603億円）</span>。
+        <span className="text-xs text-gray-500">前年同期比</span>{" "}
+        <span className="text-gray-500">+138%</span> でした。
+      </RowCard>,
+      <RowCard key={12} number={12}>
+        Adjusted EPS は <span className="font-semibold text-gray-800">$0.25（約¥38.75）</span>
+        、GAAP EPS は <span className="font-semibold text-gray-800">$0.24（約¥37.20）</span> でした。
+      </RowCard>,
+    ],
+    []
+  );
+  const visibleItems = isMdOrLarger || expanded ? snapshotItems : snapshotItems.slice(0, VISIBLE_COUNT);
+
   return (
     <div
       ref={wrapperRef}
@@ -106,7 +182,7 @@ export default function EarningsSummaryCard({
     >
       <div
         ref={innerRef}
-        className="h-full w-full overflow-hidden rounded-[2rem] bg-white/95 shadow-[0_8px_40px_rgba(0,0,0,0.08)]"
+        className={`h-full w-full rounded-[2rem] bg-white/95 shadow-[0_8px_40px_rgba(0,0,0,0.08)] scroll-mt-4 md:scroll-mt-0 ${!isMdOrLarger && expanded ? "overflow-visible" : "overflow-hidden"}`}
         style={{
           transformOrigin: "center center",
           boxShadow: "0 8px 40px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)",
@@ -117,104 +193,26 @@ export default function EarningsSummaryCard({
           subtitle="Latest Quarter Highlights"
           ctaLabel={ctaLabel}
           ctaHref={ctaHref}
+          bodyClassName={!isMdOrLarger && expanded ? "overflow-visible" : ""}
         >
-          <div
-            ref={bodyAreaRef}
-            className={
-              isMdOrLarger
-                ? "min-h-0"
-                : `relative min-h-0 max-h-[65dvh] overscroll-contain ${isInnerScrollEnabled ? "overflow-y-auto" : "overflow-hidden"}`
-            }
-            style={!isMdOrLarger ? { WebkitOverflowScrolling: "touch" } : undefined}
-            onPointerDown={
-              !isMdOrLarger
-                ? () => setInnerScrollEnabled((v) => !v)
-                : undefined
-            }
-          >
-            {!isMdOrLarger && !isInnerScrollEnabled && (
-              <span
-                className="absolute right-0 top-0 text-[10px] text-gray-400 pointer-events-none"
-                aria-hidden
-              >
-                Tap to scroll
-              </span>
-            )}
-            <ul className="space-y-[clamp(3px,0.55vh,8px)]">
-              <RowCard number={1}>
-                US revenue は<span className="text-xs text-gray-500">前年同期比</span>{" "}
-                <span className="text-gray-500">+93%</span>、<span className="text-xs text-gray-500">前四半期比</span>{" "}
-                <span className="text-gray-500">+22%</span> 増の{" "}
-                <span className="font-semibold text-gray-800">$1.08 billion（約¥1,674億円）</span> に拡大しました。
-              </RowCard>
-              <RowCard number={2}>
-                US commercial revenue は<span className="text-xs text-gray-500">前年同期比</span>{" "}
-                <span className="text-gray-500">+137%</span>、<span className="text-xs text-gray-500">前四半期比</span>{" "}
-                <span className="text-gray-500">+28%</span> 増の{" "}
-                <span className="font-semibold text-gray-800">$507 million（約¥786億円）</span> に拡大しました。
-              </RowCard>
-              <RowCard number={3}>
-                US government revenue は<span className="text-xs text-gray-500">前年同期比</span>{" "}
-                <span className="text-gray-500">+66%</span>、<span className="text-xs text-gray-500">前四半期比</span>{" "}
-                <span className="text-gray-500">+17%</span> 増の{" "}
-                <span className="font-semibold text-gray-800">$570 million（約¥884億円）</span> に拡大しました。
-              </RowCard>
-              <RowCard number={4}>
-                <span className="block">
-                  売上は<span className="text-xs text-gray-500">前年同期比</span>{" "}
-                  <span className="text-gray-500">+70%</span>、<span className="text-xs text-gray-500">前四半期比</span>{" "}
-                  <span className="text-gray-500">+19%</span> 増の{" "}
-                  <span className="font-semibold text-gray-800">$1.41 billion（約¥2,186億円）</span> に拡大しました。
-                </span>
-                <span className="block text-gray-500">
-                  <span className="block">
-                    {"また Strategic Commercial Contracts を除くと、前年同期比 +72%、前四半期比 +19% でした。"}
-                  </span>
-                </span>
-              </RowCard>
-              <RowCard number={5}>
-                Rule of 40 スコアは <strong className="text-gray-800">127%</strong> でした。
-              </RowCard>
-              <RowCard number={6}>
-                <span className="font-semibold text-gray-800">$1 million</span>以上 の案件を 180件、
-                <span className="font-semibold text-gray-800">$5 million</span>以上 を 84件、
-                <span className="font-semibold text-gray-800">$10 million</span>以上 を 61件 クローズしました。
-              </RowCard>
-              <RowCard number={7}>
-                Adjusted free cash flow は{" "}
-                <span className="font-semibold text-gray-800">$791 million（約¥1,226億円）</span>、マージンは{" "}
-                <span className="text-gray-500">56%</span> でした。
-              </RowCard>
-              <RowCard number={8}>
-                Adjusted operating income は{" "}
-                <span className="font-semibold text-gray-800">$798 million（約¥1,237億円）</span>、マージンは{" "}
-                <span className="text-gray-500">57%</span> でした。
-              </RowCard>
-              <RowCard number={9}>
-                US commercial remaining deal value（“RDV”） は
-                <span className="text-xs text-gray-500">前年同期比</span>{" "}
-                <span className="text-gray-500">+145%</span>、
-                <span className="text-xs text-gray-500">前四半期比</span>{" "}
-                <span className="text-gray-500">+21%</span> 増の{" "}
-                <span className="font-semibold text-gray-800">$4.38 billion（約¥6,789億円）</span> に拡大しました。
-              </RowCard>
-              <RowCard number={10}>
-                US commercial total contract value（“TCV”） は過去最高の四半期となり、
-                <span className="font-semibold text-gray-800">$1.34 billion（約¥2,077億円）</span>。
-                <span className="text-xs text-gray-500">前年同期比</span>{" "}
-                <span className="text-gray-500">+67%</span> でした。
-              </RowCard>
-              <RowCard number={11}>
-                TCV は過去最高の四半期となり、
-                <span className="font-semibold text-gray-800">$4.26 billion（約¥6,603億円）</span>。
-                <span className="text-xs text-gray-500">前年同期比</span>{" "}
-                <span className="text-gray-500">+138%</span> でした。
-              </RowCard>
-              <RowCard number={12}>
-                Adjusted EPS は <span className="font-semibold text-gray-800">$0.25（約¥38.75）</span>
-                、GAAP EPS は <span className="font-semibold text-gray-800">$0.24（約¥37.20）</span> でした。
-              </RowCard>
+          <div className="min-h-0">
+            <ul
+              id="earnings-snapshot-list"
+              className="space-y-[clamp(3px,0.55vh,8px)]"
+            >
+              {visibleItems}
             </ul>
+            {!isMdOrLarger && (
+              <button
+                type="button"
+                onClick={() => setExpanded((v) => !v)}
+                className="mt-2 text-sm text-gray-500 underline"
+                aria-expanded={expanded}
+                aria-controls="earnings-snapshot-list"
+              >
+                {expanded ? "Show less" : "Show more"}
+              </button>
+            )}
           </div>
         </FeatureCardShell>
       </div>

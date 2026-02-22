@@ -58,18 +58,19 @@ export default function ScrollSections({
           <div
             className={
               section.id === "summary"
-                ? "w-[92%] max-w-[1120px]"
+                ? "w-[92%] max-w-[1120px] h-auto min-h-[min(620px,calc(100vh-190px))] md:h-[min(620px,calc(100vh-190px))] md:max-h-[620px]"
                 : "w-[92%] max-w-4xl sm:w-[90%]" +
                   (markCardsForBackground && index === 0 ? " translate-x-3 md:translate-x-0" : "")
             }
-            style={{
-              height:
-                section.id === "summary"
-                  ? "min(620px, calc(100vh - 190px))"
-                  : "clamp(55vh, 70vh, 75vh)",
-              maxHeight: section.id === "summary" ? "620px" : "75vh",
-              minHeight: undefined,
-            }}
+            style={
+              section.id === "summary"
+                ? undefined
+                : {
+                    height: "clamp(55vh, 70vh, 75vh)",
+                    maxHeight: "75vh",
+                    minHeight: undefined,
+                  }
+            }
             {...(markCardsForBackground ? { "data-about-card": "" } : {})}
           >
             {section.id === "price" ? (
