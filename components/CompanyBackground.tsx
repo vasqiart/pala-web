@@ -90,6 +90,7 @@ export default function CompanyBackground() {
         count={COMPANY_BG_IMAGES.length}
         placementMode="collisionFree"
         sizeScale={1.12}
+        minCountMobile={16}
       />
     );
   }

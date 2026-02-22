@@ -14,6 +14,7 @@ export default function AboutPage() {
         count={TOP_BG_COUNT}
         placementMode="collisionFree"
         sizeScale={1.12}
+        minCountMobile={18}
       />
       <div className="relative" style={{ zIndex: 10 }}>
         <ScrollSections

@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, useEffect, useRef } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import FeatureCardShell from "@/components/cards/FeatureCardShell";
 import { gsap } from "@/lib/gsap";
 import type { SectionItem } from "@/lib/sections";
@@ -35,6 +35,27 @@ export default function EarningsSummaryCard({
   const summaryRotation = 0;
   const wrapperRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
+  const bodyAreaRef = useRef<HTMLDivElement>(null);
+  const [isMdOrLarger, setIsMdOrLarger] = useState(true);
+  const [isInnerScrollEnabled, setInnerScrollEnabled] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const handler = () => setIsMdOrLarger(mq.matches);
+    handler();
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  useEffect(() => {
+    if (!isInnerScrollEnabled) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (bodyAreaRef.current?.contains(e.target as Node)) return;
+      setInnerScrollEnabled(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [isInnerScrollEnabled]);
 
   useEffect(() => {
     if (typeof window === "undefined" || !wrapperRef.current || !innerRef.current) return;
@@ -97,7 +118,29 @@ export default function EarningsSummaryCard({
           ctaLabel={ctaLabel}
           ctaHref={ctaHref}
         >
-          <ul className="space-y-[clamp(3px,0.55vh,8px)]">
+          <div
+            ref={bodyAreaRef}
+            className={
+              isMdOrLarger
+                ? "min-h-0"
+                : `relative min-h-0 max-h-[65dvh] overscroll-contain ${isInnerScrollEnabled ? "overflow-y-auto" : "overflow-hidden"}`
+            }
+            style={!isMdOrLarger ? { WebkitOverflowScrolling: "touch" } : undefined}
+            onPointerDown={
+              !isMdOrLarger
+                ? () => setInnerScrollEnabled((v) => !v)
+                : undefined
+            }
+          >
+            {!isMdOrLarger && !isInnerScrollEnabled && (
+              <span
+                className="absolute right-0 top-0 text-[10px] text-gray-400 pointer-events-none"
+                aria-hidden
+              >
+                Tap to scroll
+              </span>
+            )}
+            <ul className="space-y-[clamp(3px,0.55vh,8px)]">
               <RowCard number={1}>
                 US revenue は<span className="text-xs text-gray-500">前年同期比</span>{" "}
                 <span className="text-gray-500">+93%</span>、<span className="text-xs text-gray-500">前四半期比</span>{" "}
@@ -172,6 +215,7 @@ export default function EarningsSummaryCard({
                 、GAAP EPS は <span className="font-semibold text-gray-800">$0.24（約¥37.20）</span> でした。
               </RowCard>
             </ul>
+          </div>
         </FeatureCardShell>
       </div>
     </div>

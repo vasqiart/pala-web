@@ -5,8 +5,21 @@ import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
 import type { SectionItem } from "@/lib/sections";
 import FeatureCardShell from "@/components/cards/FeatureCardShell";
+import MobileButtonDogIcon from "@/components/MobileButtonDogIcon";
 
 type Props = SectionItem;
+
+function MobileCtaDog({ src, alt = "" }: { src: string; alt?: string }) {
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      width={32}
+      height={32}
+      className="h-8 w-auto pointer-events-none"
+    />
+  );
+}
 
 export default function RotatingCard({
   id,
@@ -94,6 +107,11 @@ export default function RotatingCard({
                 ctaHref={ctaHref}
                 className={cardImage ? "min-w-0 flex-1" : ""}
                 bodyClassName={isAboutLinksCard ? "flex flex-col min-h-0" : ""}
+                footerTrailing={
+                  id === "karp" && cardDecorImage ? (
+                    <MobileCtaDog src={cardDecorImage} alt="" />
+                  ) : undefined
+                }
               >
                 <div className={isAboutLinksCard ? "mb-4 shrink-0" : "mb-6"}>
               {inlineImage ? (
@@ -208,7 +226,7 @@ export default function RotatingCard({
               )}
             </div>
             <div
-              className="absolute right-14 top-1/2 z-10 h-auto w-[clamp(140px,16vw,220px)] -translate-y-1/2 pointer-events-none drop-shadow-[0_12px_24px_rgba(0,0,0,0.12)] bg-transparent"
+              className="absolute right-14 top-1/2 z-10 h-auto w-[clamp(140px,16vw,220px)] -translate-y-1/2 pointer-events-none drop-shadow-[0_12px_24px_rgba(0,0,0,0.12)] bg-transparent hidden md:block"
               aria-hidden
             >
               <Image
@@ -231,18 +249,23 @@ export default function RotatingCard({
               ctaHref={ctaHref}
               className={cardImage ? "min-w-0 flex-1" : ""}
               bodyClassName={isAboutLinksCard ? "flex flex-col min-h-0" : ""}
+              footerTrailing={
+                (id === "about" || id === "company") && cardImage ? (
+                  <MobileButtonDogIcon src={cardImage} alt="" />
+                ) : undefined
+              }
             >
               <div className={isAboutLinksCard ? "mb-4 shrink-0" : "mb-6"}>
                 {inlineImage ? (
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="min-w-0 whitespace-pre-line text-sm leading-relaxed text-gray-600 md:text-base">
+                  <div className="flex flex-col gap-2 items-start md:flex-row md:items-center md:justify-between md:gap-3">
+                    <p className="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-sm leading-relaxed text-gray-600 md:overflow-visible md:whitespace-pre-line md:text-base">
                       {paragraphs.map((p) => p.trim()).join("\n\n")}
                     </p>
                     <a
                       href={inlineImage.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="shrink-0 inline-flex items-center underline decoration-gray-400 hover:opacity-90 hover:decoration-gray-600 transition-opacity"
+                      className="shrink-0 inline-flex items-center underline decoration-gray-400 opacity-80 transition-opacity md:opacity-100 md:hover:opacity-90 md:hover:decoration-gray-600"
                       aria-label="Open Palantir Investors"
                     >
                       <Image
@@ -250,7 +273,7 @@ export default function RotatingCard({
                         alt=""
                         width={133}
                         height={32}
-                        className="h-8 w-auto object-contain"
+                        className="w-16 h-auto object-contain md:w-auto md:h-8"
                       />
                     </a>
                   </div>
@@ -330,8 +353,8 @@ export default function RotatingCard({
               <div
                 className={
                   id === "company"
-                    ? "flex w-[200px] shrink-0 justify-center pb-[clamp(10px,1.8vh,22px)] pr-[clamp(12px,2vw,28px)] pt-[clamp(10px,1.8vh,22px)] md:mt-2 md:w-[220px] md:self-end md:mr-20"
-                    : "shrink-0 pb-[clamp(10px,1.8vh,22px)] pr-[clamp(12px,2vw,28px)] pt-[clamp(10px,1.8vh,22px)] md:mt-2 md:self-end"
+                    ? "flex w-[200px] shrink-0 justify-center pb-[clamp(10px,1.8vh,22px)] pr-[clamp(12px,2vw,28px)] pt-[clamp(10px,1.8vh,22px)] md:mt-2 md:w-[220px] md:self-end md:mr-20 hidden md:flex"
+                    : `shrink-0 pb-[clamp(10px,1.8vh,22px)] pr-[clamp(12px,2vw,28px)] pt-[clamp(10px,1.8vh,22px)] md:mt-2 md:self-end${id === "about" ? " hidden md:block" : ""}`
                 }
               >
                 <Image

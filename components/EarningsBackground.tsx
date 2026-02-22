@@ -89,6 +89,7 @@ export default function EarningsBackground() {
         count={16}
         placementMode="collisionFree"
         sizeScale={1.12}
+        minCountMobile={16}
       />
     );
   }

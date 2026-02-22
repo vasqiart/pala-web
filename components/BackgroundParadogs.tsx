@@ -85,6 +85,8 @@ type Props = {
   densityMultiplier?: number;
   /** 配置の軽いバリエーション */
   layoutPreset?: "default" | "sharePrice";
+  /** モバイル時のみ、この数以上を表示する（collisionFree 時。省略時は従来どおり） */
+  minCountMobile?: number;
 };
 
 /**
@@ -172,7 +174,8 @@ function computeCollisionFreePositions(
   seed: number,
   _sizeScale: number,
   densityMultiplier: number,
-  layoutPreset: "default" | "sharePrice"
+  layoutPreset: "default" | "sharePrice",
+  minCountMobile?: number
 ): PositionItem[] {
   if (typeof window === "undefined") return [];
   const vw = window.innerWidth;
@@ -182,17 +185,27 @@ function computeCollisionFreePositions(
   const margin = EDGE_MARGIN;
   const usableW = vw - 2 * margin;
   const usableH = vh - 2 * margin;
-  const gridX = Math.max(1, Math.floor(usableW / CELL_SIZE_PX));
-  const gridY = Math.max(1, Math.floor(usableH / CELL_SIZE_PX));
+  const cellSizePx =
+    !isDesktopLike && minCountMobile != null && minCountMobile > 0
+      ? Math.min(
+          CELL_SIZE_PX,
+          Math.floor(Math.min(usableW, usableH) / Math.ceil(Math.sqrt(minCountMobile)))
+        )
+      : CELL_SIZE_PX;
+  const gridX = Math.max(1, Math.floor(usableW / cellSizePx));
+  const gridY = Math.max(1, Math.floor(usableH / cellSizePx));
   const totalSlots = gridX * gridY;
   const baseTargetCount = Math.min(
     imagePaths.length * 2,
     Math.max(TARGET_COUNT_MIN, Math.min(TARGET_COUNT_MAX, Math.round(totalSlots * CELL_FILL_RATIO)))
   );
-  const targetCount = Math.max(
+  let targetCount = Math.max(
     1,
     Math.round(baseTargetCount * Math.max(0.1, effectiveDensity))
   );
+  if (!isDesktopLike && minCountMobile != null && minCountMobile > 0) {
+    targetCount = Math.max(targetCount, Math.min(minCountMobile, imagePaths.length));
+  }
   const cellW = usableW / gridX;
   const cellH = usableH / gridY;
   const charSize = Math.min(cellW, cellH) * 0.9;
@@ -338,6 +351,7 @@ export default function BackgroundParadogs({
   placementMode = "random",
   densityMultiplier = 1,
   layoutPreset = "default",
+  minCountMobile,
 }: Props) {
   const [collisionPositions, setCollisionPositions] = useState<PositionItem[] | null>(null);
   const seedRef = useRef(seed);
@@ -349,10 +363,11 @@ export default function BackgroundParadogs({
       seedRef.current,
       sizeScale,
       densityMultiplier,
-      layoutPreset
+      layoutPreset,
+      minCountMobile
     );
     setCollisionPositions(next);
-  }, [imagePaths, count, sizeScale, densityMultiplier, layoutPreset]);
+  }, [imagePaths, count, sizeScale, densityMultiplier, layoutPreset, minCountMobile]);
 
   useLayoutEffect(() => {
     if (placementMode !== "collisionFree") return;

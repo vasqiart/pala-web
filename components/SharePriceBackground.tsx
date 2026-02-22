@@ -89,9 +89,10 @@ export default function SharePriceBackground() {
     return (
       <BackgroundParadogs
         imagePaths={SHARE_PRICE_BG_IMAGES}
-        count={16}
+        count={SHARE_PRICE_BG_IMAGES.length}
         placementMode="collisionFree"
         sizeScale={1.12}
+        minCountMobile={17}
       />
     );
   }

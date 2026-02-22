@@ -11,6 +11,7 @@ type Props = {
   children: ReactNode;
   className?: string;
   bodyClassName?: string;
+  footerTrailing?: ReactNode;
 };
 
 const SUMMARY_GAP = "clamp(4px, 0.7vh, 10px)";
@@ -23,6 +24,7 @@ export default function FeatureCardShell({
   children,
   className = "",
   bodyClassName = "",
+  footerTrailing,
 }: Props) {
   return (
     <div
@@ -45,12 +47,24 @@ export default function FeatureCardShell({
       </div>
 
       <footer className="shrink-0 pt-[var(--summary-gap)]">
-        <Link
-          href={ctaHref}
-          className="inline-block rounded-full bg-gray-800 px-[clamp(12px,1.6vw,20px)] py-[clamp(5px,0.9vh,10px)] text-[clamp(11px,1.35vh,14px)] font-medium text-white transition-opacity hover:opacity-90"
-        >
-          {ctaLabel}
-        </Link>
+        {footerTrailing != null ? (
+          <div className="flex flex-nowrap items-center gap-2">
+            <Link
+              href={ctaHref}
+              className="inline-block rounded-full bg-gray-800 px-[clamp(12px,1.6vw,20px)] py-[clamp(5px,0.9vh,10px)] text-[clamp(11px,1.35vh,14px)] font-medium text-white transition-opacity hover:opacity-90"
+            >
+              {ctaLabel}
+            </Link>
+            <span className="block md:hidden">{footerTrailing}</span>
+          </div>
+        ) : (
+          <Link
+            href={ctaHref}
+            className="inline-block rounded-full bg-gray-800 px-[clamp(12px,1.6vw,20px)] py-[clamp(5px,0.9vh,10px)] text-[clamp(11px,1.35vh,14px)] font-medium text-white transition-opacity hover:opacity-90"
+          >
+            {ctaLabel}
+          </Link>
+        )}
       </footer>
     </div>
   );

@@ -43,13 +43,15 @@ export default function ScrollSections({
           )}
         </header>
       )}
-      {sections.map((section) => (
+      {sections.map((section, index) => (
         <section
           key={section.id}
           className={
             section.id === "summary"
               ? "flex min-h-[100vh] items-start justify-center px-4 pb-2 pt-2 md:px-6 md:pb-3 md:pt-3"
-              : "flex min-h-[100vh] items-center justify-center px-4 py-20 md:px-6 md:py-24"
+              : index === 0 && pageTitle && !topSpacer
+                ? "flex min-h-[100vh] items-center justify-center px-4 pt-8 pb-20 md:px-6 md:py-24"
+                : "flex min-h-[100vh] items-center justify-center px-4 py-20 md:px-6 md:py-24"
           }
           style={{ minHeight: section.id === "summary" ? "calc(100vh - 72px)" : "100vh" }}
         >
@@ -57,7 +59,8 @@ export default function ScrollSections({
             className={
               section.id === "summary"
                 ? "w-[92%] max-w-[1120px]"
-                : "w-[92%] max-w-4xl sm:w-[90%]"
+                : "w-[92%] max-w-4xl sm:w-[90%]" +
+                  (markCardsForBackground && index === 0 ? " translate-x-3 md:translate-x-0" : "")
             }
             style={{
               height:
