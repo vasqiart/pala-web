@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     if (!result?.meta) throw new Error("Invalid chart response");
     const meta = result.meta;
     const price = meta.regularMarketPrice ?? meta.previousClose ?? 0;
-    const prevClose = meta.chartPreviousClose ?? meta.previousClose ?? price;
+    const prevClose = meta.previousClose ?? price;
     const change = price - prevClose;
     const changePct = prevClose !== 0 ? (change / prevClose) * 100 : 0;
     const asOfTimestamp =
