@@ -10,14 +10,34 @@ export type PriceResponse = {
   asOfET: string;
 };
 
+const TIMEOUT_MS = 6000;
+
+function zeroPriceResponse(symbol: string): NextResponse {
+  return NextResponse.json(
+    {
+      symbol,
+      price: 0,
+      change: 0,
+      changePct: 0,
+      prevClose: 0,
+      asOfET: formatEtIso(new Date()),
+    } satisfies PriceResponse,
+    { status: 200 }
+  );
+}
+
 export async function GET(request: NextRequest) {
   const symbol = request.nextUrl.searchParams.get("symbol") ?? "PLTR";
+  const ac = new AbortController();
+  const to = setTimeout(() => ac.abort(), TIMEOUT_MS);
   try {
     const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=5d`;
     const res = await fetch(url, {
+      signal: ac.signal,
       headers: { "User-Agent": "Mozilla/5.0 (compatible; pala_web/1.0)" },
       cache: "no-store",
     });
+    clearTimeout(to);
     if (!res.ok) throw new Error(`Yahoo ${res.status}`);
     const data = await res.json();
     const result = data?.chart?.result?.[0];
@@ -57,17 +77,11 @@ export async function GET(request: NextRequest) {
     };
     return NextResponse.json(body);
   } catch (err) {
+    clearTimeout(to);
+    if (err instanceof Error && err.name === "AbortError") {
+      return zeroPriceResponse(symbol);
+    }
     console.error("[api/price]", err);
-    return NextResponse.json(
-      {
-        symbol,
-        price: 0,
-        change: 0,
-        changePct: 0,
-        prevClose: 0,
-        asOfET: formatEtIso(new Date()),
-      } satisfies PriceResponse,
-      { status: 200 }
-    );
+    return zeroPriceResponse(symbol);
   }
 }
