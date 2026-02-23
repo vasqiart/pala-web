@@ -16,14 +16,31 @@ export async function GET(request: NextRequest) {
     const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=5d`;
     const res = await fetch(url, {
       headers: { "User-Agent": "Mozilla/5.0 (compatible; pala_web/1.0)" },
+      cache: "no-store",
     });
     if (!res.ok) throw new Error(`Yahoo ${res.status}`);
     const data = await res.json();
     const result = data?.chart?.result?.[0];
     if (!result?.meta) throw new Error("Invalid chart response");
     const meta = result.meta;
-    const price = meta.regularMarketPrice ?? meta.previousClose ?? 0;
-    const prevClose = meta.previousClose ?? price;
+    const closes = result.indicators?.quote?.[0]?.close as unknown;
+    const isValidNum = (v: unknown): v is number =>
+      typeof v === "number" && Number.isFinite(v);
+    let price: number;
+    let prevClose: number;
+    if (
+      Array.isArray(closes) &&
+      closes.length >= 2 &&
+      isValidNum(closes[closes.length - 1]) &&
+      isValidNum(closes[closes.length - 2]) &&
+      (closes[closes.length - 1] as number) > 0
+    ) {
+      price = closes[closes.length - 1] as number;
+      prevClose = closes[closes.length - 2] as number;
+    } else {
+      price = meta.regularMarketPrice ?? meta.previousClose ?? 0;
+      prevClose = meta.previousClose ?? price;
+    }
     const change = price - prevClose;
     const changePct = prevClose !== 0 ? (change / prevClose) * 100 : 0;
     const asOfTimestamp =
