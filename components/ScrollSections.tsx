@@ -59,10 +59,11 @@ export default function ScrollSections({
               section.id === "summary"
                 ? "w-[92%] max-w-[1120px] h-auto min-h-[min(620px,calc(100dvh-190px))] md:min-h-[min(620px,calc(100vh-190px))] md:h-[min(620px,calc(100vh-190px))] md:max-h-[620px]"
                 : "w-[92%] max-w-4xl sm:w-[90%]" +
+                  (section.id.startsWith("company-") ? " h-auto" : "") +
                   (markCardsForBackground && index === 0 ? " translate-x-3 md:translate-x-0" : "")
             }
             style={
-              section.id === "summary"
+              section.id === "summary" || section.id.startsWith("company-")
                 ? undefined
                 : {
                     height: "clamp(55vh, 70vh, 75vh)",

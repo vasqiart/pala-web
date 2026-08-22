@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
 import type { SectionItem } from "@/lib/sections";
 import FeatureCardShell from "@/components/cards/FeatureCardShell";
@@ -37,6 +37,7 @@ export default function RotatingCard({
 }: Props) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
+  const [isMobileExpanded, setIsMobileExpanded] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined" || !wrapperRef.current || !innerRef.current) return;
@@ -77,6 +78,58 @@ export default function RotatingCard({
 
   const paragraphs = description.split(/\n\n+/);
   const isAboutLinksCard = id === "links" && Array.isArray(links) && links.length > 0;
+  const isCompanyLongform = id.startsWith("company-");
+  const longformContentId = `${id}-description`;
+
+  const renderParagraph = (paragraph: string) => {
+    const [firstLine, ...remainingLines] = paragraph.trim().split("\n");
+    const isPlatformName = ["Gotham", "Foundry", "Apollo", "AIP"].includes(firstLine);
+
+    if (!isPlatformName) return paragraph.trim();
+
+    return (
+      <>
+        <span className="mb-1 block font-semibold text-gray-800">{firstLine}</span>
+        {remainingLines.join("\n")}
+      </>
+    );
+  };
+
+  const toggleMobileLongform = () => {
+    setIsMobileExpanded((expanded) => !expanded);
+  };
+
+  const defaultDescriptionContent = inlineImage ? (
+    <div className="flex flex-col gap-2 items-start md:flex-row md:items-center md:justify-between md:gap-3">
+      <p className="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-sm leading-relaxed text-gray-600 md:overflow-visible md:whitespace-pre-line md:text-base">
+        {paragraphs.map((p) => p.trim()).join("\n\n")}
+      </p>
+      <a
+        href={inlineImage.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="shrink-0 inline-flex items-center underline decoration-gray-400 opacity-80 transition-opacity md:opacity-100 md:hover:opacity-90 md:hover:decoration-gray-600"
+        aria-label="Open Palantir Investors"
+      >
+        <Image
+          src={inlineImage.src}
+          alt=""
+          width={133}
+          height={32}
+          className="w-16 h-auto object-contain md:w-auto md:h-8"
+        />
+      </a>
+    </div>
+  ) : (
+    paragraphs.map((paragraph, i) => (
+      <p
+        key={i}
+        className={`whitespace-pre-line text-sm ${id === "company" || id === "karp" ? "leading-6" : "leading-relaxed"} text-gray-600 md:text-base ${i < paragraphs.length - 1 ? (id === "earnings" || id === "company" || id === "karp" ? "mb-1" : "mb-3") : ""}`}
+      >
+        {renderParagraph(paragraph)}
+      </p>
+    ))
+  );
 
   return (
     <div
@@ -113,7 +166,15 @@ export default function RotatingCard({
                   ) : undefined
                 }
               >
-                <div className={isAboutLinksCard ? "mb-4 shrink-0" : "mb-6"}>
+                <div
+                  className={
+                    isAboutLinksCard
+                      ? "mb-4 shrink-0"
+                      : isCompanyLongform
+                        ? "h-full overflow-y-auto pb-2 pr-1"
+                        : "mb-6"
+                  }
+                >
               {inlineImage ? (
                 <div className="flex items-center justify-between gap-3">
                   <p className="min-w-0 whitespace-pre-line text-sm leading-relaxed text-gray-600 md:text-base">
@@ -141,7 +202,7 @@ export default function RotatingCard({
                     key={i}
                     className={`whitespace-pre-line text-sm ${id === "company" || id === "karp" ? "leading-6" : "leading-relaxed"} text-gray-600 md:text-base ${i < paragraphs.length - 1 ? (id === "earnings" || id === "company" || id === "karp" ? "mb-1" : "mb-3") : ""}`}
                   >
-                    {paragraph.trim()}
+                    {renderParagraph(paragraph)}
                   </p>
                 ))
               )}
@@ -255,39 +316,40 @@ export default function RotatingCard({
                 ) : undefined
               }
             >
-              <div className={isAboutLinksCard ? "mb-4 shrink-0" : "mb-6"}>
-                {inlineImage ? (
-                  <div className="flex flex-col gap-2 items-start md:flex-row md:items-center md:justify-between md:gap-3">
-                    <p className="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-sm leading-relaxed text-gray-600 md:overflow-visible md:whitespace-pre-line md:text-base">
-                      {paragraphs.map((p) => p.trim()).join("\n\n")}
-                    </p>
-                    <a
-                      href={inlineImage.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="shrink-0 inline-flex items-center underline decoration-gray-400 opacity-80 transition-opacity md:opacity-100 md:hover:opacity-90 md:hover:decoration-gray-600"
-                      aria-label="Open Palantir Investors"
-                    >
-                      <Image
-                        src={inlineImage.src}
-                        alt=""
-                        width={133}
-                        height={32}
-                        className="w-16 h-auto object-contain md:w-auto md:h-8"
+              {isCompanyLongform ? (
+                <div className="flex min-h-0 flex-col">
+                  <div
+                    id={longformContentId}
+                    className={`relative pr-1 md:max-h-none md:overflow-visible md:pb-2 ${
+                      isMobileExpanded
+                        ? "overflow-visible pb-2"
+                        : "max-h-[32vh] overflow-hidden pb-10"
+                    }`}
+                  >
+                    {defaultDescriptionContent}
+                    {!isMobileExpanded && (
+                      <div
+                        className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-white via-white/95 to-transparent md:hidden"
+                        aria-hidden
                       />
-                    </a>
+                    )}
                   </div>
-                ) : (
-                  paragraphs.map((paragraph, i) => (
-                    <p
-                      key={i}
-                      className={`whitespace-pre-line text-sm ${id === "company" || id === "karp" ? "leading-6" : "leading-relaxed"} text-gray-600 md:text-base ${i < paragraphs.length - 1 ? (id === "earnings" || id === "company" || id === "karp" ? "mb-1" : "mb-3") : ""}`}
-                    >
-                      {paragraph.trim()}
-                    </p>
-                  ))
-                )}
-              </div>
+                  <button
+                    type="button"
+                    aria-expanded={isMobileExpanded}
+                    aria-controls={longformContentId}
+                    onClick={toggleMobileLongform}
+                    className="mx-auto mt-2 inline-flex shrink-0 items-center gap-1.5 rounded-full border border-gray-300 bg-white/90 px-4 py-2 text-[11px] font-semibold tracking-[0.08em] text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 md:hidden"
+                  >
+                    {isMobileExpanded ? "SHOW LESS" : "SHOW MORE"}
+                    <span aria-hidden>{isMobileExpanded ? "↑" : "↓"}</span>
+                  </button>
+                </div>
+              ) : (
+                <div className={isAboutLinksCard ? "mb-4 shrink-0" : "mb-6"}>
+                  {defaultDescriptionContent}
+                </div>
+              )}
               {links && links.length > 0 && (
                 <ul
                   className={
