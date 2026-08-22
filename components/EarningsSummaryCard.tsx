@@ -13,6 +13,10 @@ import type { SectionItem } from "@/lib/sections";
 
 type Props = SectionItem;
 const MOBILE_VISIBLE_COUNT = 4;
+const ARCHIVE_YEARS = [
+  ...new Set(EARNINGS_ARCHIVE.map((quarter) => quarter.fiscalYear)),
+];
+const LATEST_ARCHIVE_YEAR = ARCHIVE_YEARS[0]!;
 
 function escapeRegExp(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -93,11 +97,20 @@ function HighlightList({
   );
 }
 
-function ArchiveContent({ kind }: { kind: "earnings" | "guidance" }) {
+function ArchiveContent({
+  kind,
+  isMdOrLarger,
+}: {
+  kind: "earnings" | "guidance";
+  isMdOrLarger: boolean;
+}) {
   const [openQuarterId, setOpenQuarterId] = useState<string | null>(null);
-  const [selectedYear, setSelectedYear] = useState<number | "all">("all");
-  const years = [...new Set(EARNINGS_ARCHIVE.map((quarter) => quarter.fiscalYear))];
-  const visibleYears = selectedYear === "all" ? years : [selectedYear];
+  const [selectedYear, setSelectedYear] = useState<number | "all">(() =>
+    isMdOrLarger ? "all" : LATEST_ARCHIVE_YEAR
+  );
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const visibleYears =
+    selectedYear === "all" ? ARCHIVE_YEARS : [selectedYear];
 
   const selectYear = (year: number | "all") => {
     setSelectedYear(year);
@@ -105,18 +118,21 @@ function ArchiveContent({ kind }: { kind: "earnings" | "guidance" }) {
   };
 
   return (
-    <div className="h-full overflow-y-auto overscroll-contain pr-1">
-      <div className="mb-3 border-b border-gray-200/70 pb-3">
+    <div
+      ref={scrollAreaRef}
+      className="h-full min-h-0 touch-pan-y overflow-y-auto overscroll-contain pr-1 [scrollbar-gutter:stable]"
+    >
+      <div className="sticky top-0 z-10 mb-3 border-b border-gray-200/70 bg-white/95 pb-3 pt-0.5 backdrop-blur-sm">
         <div className="mb-2 flex items-center justify-between gap-3 text-[10px] font-semibold tracking-[0.08em] text-gray-500 md:text-[11px]">
           <span>{EARNINGS_ARCHIVE.length} QUARTERS · SINCE LISTING</span>
           <span className="hidden text-gray-400 sm:inline">Q3 FY2020 — Q1 FY2026</span>
         </div>
-        <div className="flex gap-1.5 overflow-x-auto pb-0.5" aria-label="Fiscal year filter">
+        <div className="flex gap-2 overflow-x-auto pb-1" aria-label="Fiscal year filter">
           <button
             type="button"
             aria-pressed={selectedYear === "all"}
             onClick={() => selectYear("all")}
-            className={`shrink-0 rounded-full border px-3 py-1 text-[10px] font-semibold tracking-[0.08em] transition-colors md:text-[11px] ${
+            className={`min-h-11 shrink-0 rounded-full border px-4 py-2 text-[11px] font-semibold tracking-[0.08em] transition-colors md:min-h-0 md:px-3 md:py-1 md:text-[11px] ${
               selectedYear === "all"
                 ? "border-gray-800 bg-gray-800 text-white"
                 : "border-gray-200 bg-white text-gray-500 hover:border-gray-400 hover:text-gray-700"
@@ -124,13 +140,13 @@ function ArchiveContent({ kind }: { kind: "earnings" | "guidance" }) {
           >
             ALL
           </button>
-          {years.map((year) => (
+          {ARCHIVE_YEARS.map((year) => (
             <button
               key={year}
               type="button"
               aria-pressed={selectedYear === year}
               onClick={() => selectYear(year)}
-              className={`shrink-0 rounded-full border px-3 py-1 text-[10px] font-semibold tracking-[0.08em] transition-colors md:text-[11px] ${
+              className={`min-h-11 shrink-0 rounded-full border px-4 py-2 text-[11px] font-semibold tracking-[0.08em] transition-colors md:min-h-0 md:px-3 md:py-1 md:text-[11px] ${
                 selectedYear === year
                   ? "border-gray-800 bg-gray-800 text-white"
                   : "border-gray-200 bg-white text-gray-500 hover:border-gray-400 hover:text-gray-700"
@@ -177,12 +193,23 @@ function ArchiveContent({ kind }: { kind: "earnings" | "guidance" }) {
                   >
                     <button
                       type="button"
-                      className="relative flex w-full items-center px-4 py-3 pr-[9.5rem] text-left transition-colors hover:bg-gray-100/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gray-400 md:pr-[10.5rem]"
+                      className="relative flex min-h-[88px] w-full flex-col items-stretch px-4 py-3 text-left transition-colors hover:bg-gray-100/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gray-400 md:min-h-0 md:flex-row md:items-center md:pr-[10.5rem]"
                       aria-expanded={isOpen}
                       aria-controls={panelId}
-                      onClick={() =>
-                        setOpenQuarterId(isOpen ? null : quarter.id)
-                      }
+                      onClick={(event) => {
+                        setOpenQuarterId(isOpen ? null : quarter.id);
+
+                        if (!isOpen && !isMdOrLarger) {
+                          const article = event.currentTarget.parentElement;
+                          requestAnimationFrame(() => {
+                            if (!article || !scrollAreaRef.current) return;
+                            scrollAreaRef.current.scrollTo({
+                              top: Math.max(article.offsetTop - 112, 0),
+                              behavior: "smooth",
+                            });
+                          });
+                        }
+                      }}
                     >
                       <span className="min-w-0 flex-1">
                         <span className="block text-sm font-semibold text-gray-800 md:text-base">
@@ -193,11 +220,11 @@ function ArchiveContent({ kind }: { kind: "earnings" | "guidance" }) {
                             ? `${quarter.periodEnded} · ${quarter.reportedAt}`
                             : `Issued with ${quarter.quarter} results · ${quarter.reportedAt.replace("Reported ", "")}`}
                         </span>
-                        <span className="mt-1.5 block truncate text-xs text-gray-600 md:text-sm">
+                        <span className="mt-1.5 block line-clamp-2 text-xs leading-relaxed text-gray-600 md:truncate md:text-sm md:leading-normal">
                           {summary}
                         </span>
                       </span>
-                      <span className="absolute right-3 top-1/2 shrink-0 -translate-y-1/2 whitespace-nowrap rounded-full bg-gray-800 px-3 py-1.5 text-[10px] font-semibold tracking-[0.08em] text-white md:right-4 md:text-[11px]">
+                      <span className="mt-3 inline-flex min-h-11 w-full shrink-0 items-center justify-center whitespace-nowrap rounded-full bg-gray-800 px-4 py-2 text-[11px] font-semibold tracking-[0.08em] text-white md:absolute md:right-4 md:top-1/2 md:mt-0 md:min-h-0 md:w-auto md:-translate-y-1/2 md:px-3 md:py-1.5">
                         {isOpen
                           ? "CLOSE"
                           : kind === "earnings"
@@ -217,7 +244,7 @@ function ArchiveContent({ kind }: { kind: "earnings" | "guidance" }) {
                           href={quarter.sourceUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="mt-3 inline-flex text-[11px] font-semibold tracking-[0.06em] text-gray-600 underline decoration-gray-300 underline-offset-4 hover:text-gray-800"
+                          className="mt-3 inline-flex min-h-11 items-center rounded-lg px-1 text-[11px] font-semibold tracking-[0.06em] text-gray-600 underline decoration-gray-300 underline-offset-4 hover:text-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400"
                         >
                           OFFICIAL SOURCE
                         </a>
@@ -288,9 +315,23 @@ export default function EarningsSummaryCard({
     if (!wrapperRef.current || !innerRef.current) return;
 
     const ctx = gsap.context(() => {
+      const mobileInitialRotation = isArchive
+        ? Math.sign(initialRotation) * 4
+        : initialRotation;
+      const mobileInnerRotation = isArchive
+        ? Math.sign(innerRotation) * 3
+        : innerRotation;
+
       gsap.fromTo(
         wrapperRef.current,
-        { rotation: id === "earnings-snapshot" ? 0 : initialRotation },
+        {
+          rotation:
+            id === "earnings-snapshot"
+              ? 0
+              : isMdOrLarger
+                ? initialRotation
+                : mobileInitialRotation,
+        },
         {
           rotation: 0,
           ease: "power2.out",
@@ -307,7 +348,7 @@ export default function EarningsSummaryCard({
         innerRef.current,
         { rotation: 0 },
         {
-          rotation: innerRotation,
+          rotation: isMdOrLarger ? innerRotation : mobileInnerRotation,
           ease: "power2.out",
           scrollTrigger: {
             trigger: wrapperRef.current,
@@ -320,7 +361,7 @@ export default function EarningsSummaryCard({
     });
 
     return () => ctx.revert();
-  }, [id, initialRotation, innerRotation]);
+  }, [id, initialRotation, innerRotation, isArchive, isMdOrLarger]);
 
   return (
     <div
@@ -345,7 +386,11 @@ export default function EarningsSummaryCard({
           bodyClassName={!isArchive && !isMdOrLarger && expanded ? "overflow-visible" : ""}
         >
           {isArchive ? (
-            <ArchiveContent kind={isGuidance ? "guidance" : "earnings"} />
+            <ArchiveContent
+              key={isMdOrLarger ? "desktop" : "mobile"}
+              kind={isGuidance ? "guidance" : "earnings"}
+              isMdOrLarger={isMdOrLarger}
+            />
           ) : (
             <div className="min-h-0">
               <QuarterMeta quarter={LATEST_EARNINGS} />
