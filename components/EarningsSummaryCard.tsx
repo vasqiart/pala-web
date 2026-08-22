@@ -1,42 +1,274 @@
 "use client";
 
-import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import FeatureCardShell from "@/components/cards/FeatureCardShell";
+import {
+  EARNINGS_ARCHIVE,
+  LATEST_EARNINGS,
+  type EarningsQuarter,
+  type FinancialHighlight,
+} from "@/lib/earnings";
 import { gsap } from "@/lib/gsap";
 import type { SectionItem } from "@/lib/sections";
 
 type Props = SectionItem;
+const MOBILE_VISIBLE_COUNT = 4;
 
-function RowCard({
-  number,
-  children,
-}: {
-  number: number;
-  children: ReactNode;
-}) {
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function HighlightText({ item }: { item: FinancialHighlight }) {
+  const emphasis = item.emphasis ?? [];
+  const muted = item.muted ?? [];
+  const tokens = [...new Set([...emphasis, ...muted])].sort(
+    (a, b) => b.length - a.length
+  );
+
+  if (tokens.length === 0) return item.text;
+
+  const parts = item.text.split(
+    new RegExp(`(${tokens.map(escapeRegExp).join("|")})`, "g")
+  );
+
+  return parts.map((part, index) => {
+    if (emphasis.includes(part)) {
+      return (
+        <strong key={`${part}-${index}`} className="font-semibold text-gray-800">
+          {part}
+        </strong>
+      );
+    }
+
+    if (muted.includes(part)) {
+      return (
+        <span key={`${part}-${index}`} className="text-gray-500">
+          {part}
+        </span>
+      );
+    }
+
+    return part;
+  });
+}
+
+function RowCard({ number, item }: { number: number; item: FinancialHighlight }) {
   return (
     <li className="flex items-start gap-2 rounded-[10px] border border-black/5 bg-black/[0.015] px-[10px] py-[clamp(3px,0.55vh,8px)]">
       <div className="w-8 shrink-0 text-right text-[clamp(10px,1.25vh,13px)] font-semibold text-gray-500">
         {number}.
       </div>
       <p className="min-w-0 whitespace-pre-wrap break-words text-[clamp(10.5px,1.38vh,14px)] font-normal leading-[1.42] text-gray-700">
-        {children}
+        <HighlightText item={item} />
       </p>
     </li>
   );
 }
 
+function QuarterMeta({ quarter }: { quarter: EarningsQuarter }) {
+  return (
+    <div className="mb-[clamp(6px,0.9vh,12px)] flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[clamp(9.5px,1.18vh,12px)] leading-tight text-gray-500">
+      <span className="font-semibold text-gray-700">{quarter.quarter}</span>
+      <span aria-hidden className="text-gray-300">/</span>
+      <span>{quarter.periodEnded}</span>
+      <span aria-hidden className="text-gray-300">/</span>
+      <span>{quarter.reportedAt}</span>
+    </div>
+  );
+}
+
+function HighlightList({
+  items,
+  listId,
+}: {
+  items: FinancialHighlight[];
+  listId?: string;
+}) {
+  return (
+    <ul id={listId} className="space-y-[clamp(3px,0.55vh,8px)]">
+      {items.map((item, index) => (
+        <RowCard key={`${index}-${item.text}`} number={index + 1} item={item} />
+      ))}
+    </ul>
+  );
+}
+
+function ArchiveContent({ kind }: { kind: "earnings" | "guidance" }) {
+  const [openQuarterId, setOpenQuarterId] = useState<string | null>(null);
+  const [selectedYear, setSelectedYear] = useState<number | "all">("all");
+  const years = [...new Set(EARNINGS_ARCHIVE.map((quarter) => quarter.fiscalYear))];
+  const visibleYears = selectedYear === "all" ? years : [selectedYear];
+
+  const selectYear = (year: number | "all") => {
+    setSelectedYear(year);
+    setOpenQuarterId(null);
+  };
+
+  return (
+    <div className="h-full overflow-y-auto overscroll-contain pr-1">
+      <div className="mb-3 border-b border-gray-200/70 pb-3">
+        <div className="mb-2 flex items-center justify-between gap-3 text-[10px] font-semibold tracking-[0.08em] text-gray-500 md:text-[11px]">
+          <span>{EARNINGS_ARCHIVE.length} QUARTERS · SINCE LISTING</span>
+          <span className="hidden text-gray-400 sm:inline">Q3 FY2020 — Q1 FY2026</span>
+        </div>
+        <div className="flex gap-1.5 overflow-x-auto pb-0.5" aria-label="Fiscal year filter">
+          <button
+            type="button"
+            aria-pressed={selectedYear === "all"}
+            onClick={() => selectYear("all")}
+            className={`shrink-0 rounded-full border px-3 py-1 text-[10px] font-semibold tracking-[0.08em] transition-colors md:text-[11px] ${
+              selectedYear === "all"
+                ? "border-gray-800 bg-gray-800 text-white"
+                : "border-gray-200 bg-white text-gray-500 hover:border-gray-400 hover:text-gray-700"
+            }`}
+          >
+            ALL
+          </button>
+          {years.map((year) => (
+            <button
+              key={year}
+              type="button"
+              aria-pressed={selectedYear === year}
+              onClick={() => selectYear(year)}
+              className={`shrink-0 rounded-full border px-3 py-1 text-[10px] font-semibold tracking-[0.08em] transition-colors md:text-[11px] ${
+                selectedYear === year
+                  ? "border-gray-800 bg-gray-800 text-white"
+                  : "border-gray-200 bg-white text-gray-500 hover:border-gray-400 hover:text-gray-700"
+              }`}
+            >
+              {year}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        {visibleYears.map((year) => (
+          <section key={year} aria-label={`FY${year}`}>
+            {selectedYear === "all" && (
+              <h3
+                id={`${kind}-fy-${year}`}
+                className="mb-1.5 pl-1 text-[10px] font-semibold tracking-[0.12em] text-gray-400 md:text-[11px]"
+              >
+                FY{year}
+              </h3>
+            )}
+            <div className="space-y-2.5">
+              {EARNINGS_ARCHIVE.filter(
+                (quarter) => quarter.fiscalYear === year
+              ).map((quarter) => {
+                const isOpen = openQuarterId === quarter.id;
+                const panelId = `${kind}-${quarter.id}-panel`;
+                const title =
+                  kind === "earnings" ? quarter.quarter : quarter.guidance.title;
+                const summary =
+                  kind === "earnings"
+                    ? quarter.earningsArchiveSummary
+                    : quarter.guidance.archiveSummary;
+                const items =
+                  kind === "earnings"
+                    ? quarter.earnings
+                    : quarter.guidance.items;
+
+                return (
+                  <article
+                    key={quarter.id}
+                    className="overflow-hidden rounded-2xl border border-gray-200/80 bg-gray-50/55"
+                  >
+                    <button
+                      type="button"
+                      className="relative flex w-full items-center px-4 py-3 pr-[9.5rem] text-left transition-colors hover:bg-gray-100/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gray-400 md:pr-[10.5rem]"
+                      aria-expanded={isOpen}
+                      aria-controls={panelId}
+                      onClick={() =>
+                        setOpenQuarterId(isOpen ? null : quarter.id)
+                      }
+                    >
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-sm font-semibold text-gray-800 md:text-base">
+                          {title}
+                        </span>
+                        <span className="mt-0.5 block text-[11px] text-gray-500 md:text-xs">
+                          {kind === "earnings"
+                            ? `${quarter.periodEnded} · ${quarter.reportedAt}`
+                            : `Issued with ${quarter.quarter} results · ${quarter.reportedAt.replace("Reported ", "")}`}
+                        </span>
+                        <span className="mt-1.5 block truncate text-xs text-gray-600 md:text-sm">
+                          {summary}
+                        </span>
+                      </span>
+                      <span className="absolute right-3 top-1/2 shrink-0 -translate-y-1/2 whitespace-nowrap rounded-full bg-gray-800 px-3 py-1.5 text-[10px] font-semibold tracking-[0.08em] text-white md:right-4 md:text-[11px]">
+                        {isOpen
+                          ? "CLOSE"
+                          : kind === "earnings"
+                            ? "VIEW QUARTER"
+                            : "VIEW GUIDANCE"}
+                      </span>
+                    </button>
+
+                    {isOpen && (
+                      <div
+                        id={panelId}
+                        className="border-t border-gray-200/80 bg-white/80 px-3 py-3 md:px-4"
+                      >
+                        <QuarterMeta quarter={quarter} />
+                        <HighlightList items={items} />
+                        <a
+                          href={quarter.sourceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-3 inline-flex text-[11px] font-semibold tracking-[0.06em] text-gray-600 underline decoration-gray-300 underline-offset-4 hover:text-gray-800"
+                        >
+                          OFFICIAL SOURCE
+                        </a>
+                      </div>
+                    )}
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function EarningsSummaryCard({
+  id,
   ctaLabel,
   ctaHref,
+  initialRotation,
   innerRotation,
 }: Props) {
-  const VISIBLE_COUNT = 4;
-  const summaryRotation = 0;
   const wrapperRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
   const [isMdOrLarger, setIsMdOrLarger] = useState(true);
   const [expanded, setExpanded] = useState(false);
+
+  const isArchive = id.endsWith("archive");
+  const isGuidance = id.startsWith("guidance");
+  const isContentSizedGuidance = id === "guidance-snapshot";
+  const title = isGuidance
+    ? isArchive
+      ? "Guidance Archive"
+      : "Guidance Snapshot"
+    : isArchive
+      ? "Earnings Archive"
+      : "Earnings Snapshot";
+  const subtitle = isArchive
+    ? isGuidance
+      ? "Past Outlooks · As Originally Issued"
+      : "Past Quarter Highlights"
+    : isGuidance
+      ? LATEST_EARNINGS.guidance.title
+      : `${LATEST_EARNINGS.quarter} Earnings Highlights`;
+  const allItems = isGuidance
+    ? LATEST_EARNINGS.guidance.items
+    : LATEST_EARNINGS.earnings;
+  const visibleItems =
+    isMdOrLarger || expanded ? allItems : allItems.slice(0, MOBILE_VISIBLE_COUNT);
+  const listId = `${id}-list`;
 
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 768px)");
@@ -53,12 +285,12 @@ export default function EarningsSummaryCard({
   }, [expanded, isMdOrLarger]);
 
   useEffect(() => {
-    if (typeof window === "undefined" || !wrapperRef.current || !innerRef.current) return;
+    if (!wrapperRef.current || !innerRef.current) return;
 
     const ctx = gsap.context(() => {
       gsap.fromTo(
         wrapperRef.current,
-        { rotation: summaryRotation },
+        { rotation: id === "earnings-snapshot" ? 0 : initialRotation },
         {
           rotation: 0,
           ease: "power2.out",
@@ -88,131 +320,49 @@ export default function EarningsSummaryCard({
     });
 
     return () => ctx.revert();
-  }, [summaryRotation, innerRotation]);
-
-  const snapshotItems = useMemo(
-    () => [
-      <RowCard key={1} number={1}>
-        US revenue は<span className="text-xs text-gray-500">前年同期比</span>{" "}
-        <span className="text-gray-500">+93%</span>、<span className="text-xs text-gray-500">前四半期比</span>{" "}
-        <span className="text-gray-500">+22%</span> 増の{" "}
-        <span className="font-semibold text-gray-800">$1.08 billion（約¥1,674億円）</span> に拡大しました。
-      </RowCard>,
-      <RowCard key={2} number={2}>
-        US commercial revenue は<span className="text-xs text-gray-500">前年同期比</span>{" "}
-        <span className="text-gray-500">+137%</span>、<span className="text-xs text-gray-500">前四半期比</span>{" "}
-        <span className="text-gray-500">+28%</span> 増の{" "}
-        <span className="font-semibold text-gray-800">$507 million（約¥786億円）</span> に拡大しました。
-      </RowCard>,
-      <RowCard key={3} number={3}>
-        US government revenue は<span className="text-xs text-gray-500">前年同期比</span>{" "}
-        <span className="text-gray-500">+66%</span>、<span className="text-xs text-gray-500">前四半期比</span>{" "}
-        <span className="text-gray-500">+17%</span> 増の{" "}
-        <span className="font-semibold text-gray-800">$570 million（約¥884億円）</span> に拡大しました。
-      </RowCard>,
-      <RowCard key={4} number={4}>
-        <span className="block">
-          売上は<span className="text-xs text-gray-500">前年同期比</span>{" "}
-          <span className="text-gray-500">+70%</span>、<span className="text-xs text-gray-500">前四半期比</span>{" "}
-          <span className="text-gray-500">+19%</span> 増の{" "}
-          <span className="font-semibold text-gray-800">$1.41 billion（約¥2,186億円）</span> に拡大しました。
-        </span>
-        <span className="block text-gray-500">
-          <span className="block">
-            {"また Strategic Commercial Contracts を除くと、前年同期比 +72%、前四半期比 +19% でした。"}
-          </span>
-        </span>
-      </RowCard>,
-      <RowCard key={5} number={5}>
-        Rule of 40 スコアは <strong className="text-gray-800">127%</strong> でした。
-      </RowCard>,
-      <RowCard key={6} number={6}>
-        <span className="font-semibold text-gray-800">$1 million</span>以上 の案件を 180件、
-        <span className="font-semibold text-gray-800">$5 million</span>以上 を 84件、
-        <span className="font-semibold text-gray-800">$10 million</span>以上 を 61件 クローズしました。
-      </RowCard>,
-      <RowCard key={7} number={7}>
-        Adjusted free cash flow は{" "}
-        <span className="font-semibold text-gray-800">$791 million（約¥1,226億円）</span>、マージンは{" "}
-        <span className="text-gray-500">56%</span> でした。
-      </RowCard>,
-      <RowCard key={8} number={8}>
-        Adjusted operating income は{" "}
-        <span className="font-semibold text-gray-800">$798 million（約¥1,237億円）</span>、マージンは{" "}
-        <span className="text-gray-500">57%</span> でした。
-      </RowCard>,
-      <RowCard key={9} number={9}>
-        US commercial remaining deal value（&quot;RDV&quot;） は
-        <span className="text-xs text-gray-500">前年同期比</span>{" "}
-        <span className="text-gray-500">+145%</span>、
-        <span className="text-xs text-gray-500">前四半期比</span>{" "}
-        <span className="text-gray-500">+21%</span> 増の{" "}
-        <span className="font-semibold text-gray-800">$4.38 billion（約¥6,789億円）</span> に拡大しました。
-      </RowCard>,
-      <RowCard key={10} number={10}>
-        US commercial total contract value（&quot;TCV&quot;） は過去最高の四半期となり、
-        <span className="font-semibold text-gray-800">$1.34 billion（約¥2,077億円）</span>。
-        <span className="text-xs text-gray-500">前年同期比</span>{" "}
-        <span className="text-gray-500">+67%</span> でした。
-      </RowCard>,
-      <RowCard key={11} number={11}>
-        TCV は過去最高の四半期となり、
-        <span className="font-semibold text-gray-800">$4.26 billion（約¥6,603億円）</span>。
-        <span className="text-xs text-gray-500">前年同期比</span>{" "}
-        <span className="text-gray-500">+138%</span> でした。
-      </RowCard>,
-      <RowCard key={12} number={12}>
-        Adjusted EPS は <span className="font-semibold text-gray-800">$0.25（約¥38.75）</span>
-        、GAAP EPS は <span className="font-semibold text-gray-800">$0.24（約¥37.20）</span> でした。
-      </RowCard>,
-    ],
-    []
-  );
-  const visibleItems = isMdOrLarger || expanded ? snapshotItems : snapshotItems.slice(0, VISIBLE_COUNT);
+  }, [id, initialRotation, innerRotation]);
 
   return (
     <div
       ref={wrapperRef}
-      className="h-full will-change-transform"
-      style={{
-        transform: `rotate(${summaryRotation}deg)`,
-        transformOrigin: "center center",
-      }}
+      className={`${isContentSizedGuidance ? "h-auto" : "h-full"} will-change-transform`}
     >
       <div
         ref={innerRef}
-        className={`h-full w-full rounded-[2rem] bg-white/95 shadow-[0_8px_40px_rgba(0,0,0,0.08)] scroll-mt-4 md:scroll-mt-0 ${!isMdOrLarger && expanded ? "overflow-visible" : "overflow-hidden"}`}
+        className={`${isContentSizedGuidance ? "h-auto" : "h-full"} w-full scroll-mt-4 rounded-[2rem] bg-white/95 shadow-[0_8px_40px_rgba(0,0,0,0.08)] md:scroll-mt-0 ${
+          !isArchive && !isMdOrLarger && expanded ? "overflow-visible" : "overflow-hidden"
+        }`}
         style={{
           transformOrigin: "center center",
           boxShadow: "0 8px 40px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)",
         }}
       >
         <FeatureCardShell
-          title="Earnings Snapshot"
-          subtitle="Latest Quarter Highlights"
+          title={title}
+          subtitle={subtitle}
           ctaLabel={ctaLabel}
           ctaHref={ctaHref}
-          bodyClassName={!isMdOrLarger && expanded ? "overflow-visible" : ""}
+          bodyClassName={!isArchive && !isMdOrLarger && expanded ? "overflow-visible" : ""}
         >
-          <div className="min-h-0">
-            <ul
-              id="earnings-snapshot-list"
-              className="space-y-[clamp(3px,0.55vh,8px)]"
-            >
-              {visibleItems}
-            </ul>
-            {!isMdOrLarger && (
-              <button
-                type="button"
-                onClick={() => setExpanded((v) => !v)}
-                className="mt-2 text-sm text-gray-500 underline"
-                aria-expanded={expanded}
-                aria-controls="earnings-snapshot-list"
-              >
-                {expanded ? "Show less" : "Show more"}
-              </button>
-            )}
-          </div>
+          {isArchive ? (
+            <ArchiveContent kind={isGuidance ? "guidance" : "earnings"} />
+          ) : (
+            <div className="min-h-0">
+              <QuarterMeta quarter={LATEST_EARNINGS} />
+              <HighlightList items={visibleItems} listId={listId} />
+              {!isMdOrLarger && allItems.length > MOBILE_VISIBLE_COUNT && (
+                <button
+                  type="button"
+                  onClick={() => setExpanded((value) => !value)}
+                  className="mt-2 text-sm text-gray-500 underline underline-offset-2"
+                  aria-expanded={expanded}
+                  aria-controls={listId}
+                >
+                  {expanded ? "Show less" : "Show more"}
+                </button>
+              )}
+            </div>
+          )}
         </FeatureCardShell>
       </div>
     </div>
