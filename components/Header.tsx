@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { href: "/earnings", label: "EARNINGS" },
   { href: "/contracts", label: "CONTRACTS" },
   { href: "/karp", label: "KARP" },
+  { href: "/research", label: "RESEARCH" },
 ] as const;
 
 export default function Header() {
