@@ -49,7 +49,8 @@ export default function ResearchLightbox({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[70] flex flex-col bg-slate-950/85 px-3 py-3 backdrop-blur-md sm:px-6 sm:py-5"
+      className="fixed inset-0 z-[70] flex flex-col px-3 py-3 backdrop-blur-[6px] sm:px-6 sm:py-5"
+      style={{ background: "rgba(10, 10, 12, 0.55)" }}
       role="dialog"
       aria-modal="true"
       aria-label={`${material.title}を拡大表示`}
