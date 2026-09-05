@@ -36,4 +36,8 @@ export const KARP_IMAGES = [
   { id: "34", src: "/karp/karp-034.jpg", alt: "Alex Karp photo 034" },
   { id: "35", src: "/karp/karp-035.jpg", alt: "Alex Karp photo 035" },
   { id: "36", src: "/karp/karp-036.jpg", alt: "Alex Karp photo 036" },
+  { id: "37", src: "/karp/karp-037.jpg", alt: "Alex Karp photo 037" },
+  { id: "38", src: "/karp/karp-038.jpg", alt: "Alex Karp photo 038" },
+  { id: "39", src: "/karp/karp-039.jpg", alt: "Alex Karp photo 039" },
+  { id: "40", src: "/karp/karp-040.jpg", alt: "Alex Karp photo 040" },
 ];
