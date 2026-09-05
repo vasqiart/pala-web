@@ -1,5 +1,9 @@
-/** KARP ギャラリー画像リスト（prepare-karp-gallery.mjs 実行で上書き） */
+/** KARP ギャラリー画像リスト。新規追加分は連番を維持したまま表示順の先頭へ置く。 */
 export const KARP_IMAGES = [
+  { id: "41", src: "/karp/karp-041.jpg", alt: "Alex Karp photo 041" },
+  { id: "42", src: "/karp/karp-042.jpg", alt: "Alex Karp photo 042" },
+  { id: "43", src: "/karp/karp-043.jpg", alt: "Alex Karp photo 043" },
+  { id: "44", src: "/karp/karp-044.jpg", alt: "Alex Karp photo 044" },
   { id: "1", src: "/karp/karp-001.jpg", alt: "Alex Karp photo 001" },
   { id: "2", src: "/karp/karp-002.jpg", alt: "Alex Karp photo 002" },
   { id: "3", src: "/karp/karp-003.jpg", alt: "Alex Karp photo 003" },
