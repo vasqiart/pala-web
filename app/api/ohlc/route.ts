@@ -1,4 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+  externalFetchSignal,
+  getSupportedSymbol,
+  unsupportedSymbolResponse,
+} from "@/lib/apiSecurity";
 
 export type OhlcResponse = {
   symbol: string;
@@ -9,11 +14,13 @@ export type OhlcResponse = {
 };
 
 export async function GET(request: NextRequest) {
-  const symbol = request.nextUrl.searchParams.get("symbol") ?? "PLTR";
+  const symbol = getSupportedSymbol(request);
+  if (!symbol) return unsupportedSymbolResponse();
   try {
     const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=1y`;
     const res = await fetch(url, {
       headers: { "User-Agent": "Mozilla/5.0 (compatible; pala_web/1.0)" },
+      signal: externalFetchSignal(),
     });
     if (!res.ok) throw new Error(`Yahoo ${res.status}`);
     const data = await res.json();

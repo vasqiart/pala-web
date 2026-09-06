@@ -1,4 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+  externalFetchSignal,
+  getSupportedSymbol,
+  unsupportedSymbolResponse,
+} from "@/lib/apiSecurity";
 
 export type QuoteResponse = {
   symbol: string;
@@ -13,7 +18,8 @@ export type QuoteResponse = {
 };
 
 export async function GET(request: NextRequest) {
-  const symbol = request.nextUrl.searchParams.get("symbol") ?? "PLTR";
+  const symbol = getSupportedSymbol(request);
+  if (!symbol) return unsupportedSymbolResponse();
 
   try {
     const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=5d`;
@@ -22,6 +28,7 @@ export async function GET(request: NextRequest) {
         "User-Agent":
           "Mozilla/5.0 (compatible; pala_web/1.0)",
       },
+      signal: externalFetchSignal(),
     });
 
     if (!res.ok) {

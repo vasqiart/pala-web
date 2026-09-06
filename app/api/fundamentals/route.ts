@@ -1,4 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+  externalFetchSignal,
+  getSupportedSymbol,
+  unsupportedSymbolResponse,
+} from "@/lib/apiSecurity";
 
 export type FundamentalsResponse = {
   symbol: string;
@@ -43,6 +48,7 @@ async function yahooFallback(symbol: string): Promise<FundamentalsResponse> {
     const url = `https://query1.finance.yahoo.com/v10/finance/quoteSummary/${symbol}?modules=defaultKeyStatistics,summaryDetail,financialData`;
     const res = await fetch(url, {
       headers: { "User-Agent": "Mozilla/5.0 (compatible; pala_web/1.0)" },
+      signal: externalFetchSignal(),
     });
     if (!res.ok) return emptyBody(symbol);
     const data = await res.json();
@@ -77,21 +83,27 @@ async function yahooFallback(symbol: string): Promise<FundamentalsResponse> {
 }
 
 export async function GET(request: NextRequest) {
-  const symbol = request.nextUrl.searchParams.get("symbol") ?? "PLTR";
+  const symbol = getSupportedSymbol(request);
+  if (!symbol) return unsupportedSymbolResponse();
   const fmpKey = process.env.FMP_API_KEY ?? process.env.FMP_KEY;
 
   if (fmpKey) {
     try {
       const [metricsRes, quoteRes, incomeRes, estimatesRes] = await Promise.all([
         fetch(
-          `https://financialmodelingprep.com/api/v3/key-metrics-ttm/${symbol}?apikey=${fmpKey}`
+          `https://financialmodelingprep.com/api/v3/key-metrics-ttm/${symbol}?apikey=${fmpKey}`,
+          { signal: externalFetchSignal() }
         ),
-        fetch(`https://financialmodelingprep.com/api/v3/quote/${symbol}?apikey=${fmpKey}`),
+        fetch(`https://financialmodelingprep.com/api/v3/quote/${symbol}?apikey=${fmpKey}`, {
+          signal: externalFetchSignal(),
+        }),
         fetch(
-          `https://financialmodelingprep.com/api/v3/income-statement/${symbol}?period=quarter&limit=8&apikey=${fmpKey}`
+          `https://financialmodelingprep.com/api/v3/income-statement/${symbol}?period=quarter&limit=8&apikey=${fmpKey}`,
+          { signal: externalFetchSignal() }
         ),
         fetch(
-          `https://financialmodelingprep.com/api/v3/analyst-estimates/${symbol}?limit=1&apikey=${fmpKey}`
+          `https://financialmodelingprep.com/api/v3/analyst-estimates/${symbol}?limit=1&apikey=${fmpKey}`,
+          { signal: externalFetchSignal() }
         ),
       ]);
 

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { formatEtIso } from "@/lib/marketHours";
+import { getSupportedSymbol, unsupportedSymbolResponse } from "@/lib/apiSecurity";
 
 export type PriceResponse = {
   symbol: string;
@@ -27,7 +28,8 @@ function zeroPriceResponse(symbol: string): NextResponse {
 }
 
 export async function GET(request: NextRequest) {
-  const symbol = request.nextUrl.searchParams.get("symbol") ?? "PLTR";
+  const symbol = getSupportedSymbol(request);
+  if (!symbol) return unsupportedSymbolResponse();
   const ac = new AbortController();
   const to = setTimeout(() => ac.abort(), TIMEOUT_MS);
   try {
