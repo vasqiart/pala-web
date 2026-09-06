@@ -30,6 +30,22 @@ export type ResearchMaterial = {
 
 export const RESEARCH_MATERIALS: ResearchMaterial[] = [
   {
+    slug: "2026-09-03-pwc-palantir-partnership",
+    date: "2026-09-03",
+    displayDate: "2026.09.03",
+    title: "AIを、実験から“本番の業務”へ。",
+    summary: "PwC × Palantir、企業AIを支える戦略的提携を拡大",
+    categories: ["STRATEGY", "TECHNOLOGY"],
+    images: [
+      {
+        src: "/research/2026-09-03-pwc-palantir-partnership/01.jpg",
+        width: 1179,
+        height: 1449,
+        alt: "PwCとPalantirが企業AIを支える戦略的提携を拡大",
+      },
+    ],
+  },
+  {
     slug: "2026-08-21-security-forge",
     date: "2026-08-21",
     displayDate: "2026.08.21",
