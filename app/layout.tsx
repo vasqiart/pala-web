@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import {
   M_PLUS_Rounded_1c,
   Kosugi_Maru,
@@ -44,6 +45,7 @@ export default function RootLayout({
         className={`${mPlusRounded.variable} ${kosugiMaru.variable} font-sans antialiased`}
       >
         {children}
+        <Analytics />
       </body>
     </html>
   );
