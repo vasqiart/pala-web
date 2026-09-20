@@ -30,6 +30,56 @@ export type ResearchMaterial = {
 
 export const RESEARCH_MATERIALS: ResearchMaterial[] = [
   {
+    slug: "2026-09-10-nvidia-palantir-sovereign-intelligence",
+    date: "2026-09-10",
+    displayDate: "2026.09.10",
+    title: "NVIDIA × Palantir、Sovereign Intelligenceを発表",
+    summary: "重要サプライチェーン向けAI基盤を共同展開",
+    categories: ["TECHNOLOGY", "STRATEGY"],
+    images: [
+      {
+        src: "/research/2026-09-10-nvidia-palantir-sovereign-intelligence/01.jpg",
+        width: 1179,
+        height: 1452,
+        alt: "NVIDIAとPalantirがSovereign Intelligenceを発表",
+      },
+      {
+        src: "/research/2026-09-10-nvidia-palantir-sovereign-intelligence/02.jpg",
+        width: 1179,
+        height: 1456,
+        alt: "NVIDIAとPalantirの提携の仕組み",
+      },
+      {
+        src: "/research/2026-09-10-nvidia-palantir-sovereign-intelligence/03.jpg",
+        width: 1179,
+        height: 1449,
+        alt: "NVIDIAの実オペレーションにPalantirを導入する重要性",
+      },
+      {
+        src: "/research/2026-09-10-nvidia-palantir-sovereign-intelligence/04.jpg",
+        width: 1179,
+        height: 1453,
+        alt: "NVIDIAとPalantirの仕組みを他産業へ展開",
+      },
+    ],
+  },
+  {
+    slug: "2026-09-08-palantir-nebius-partnership",
+    date: "2026-09-08",
+    displayDate: "2026.09.08",
+    title: "Palantir × Nebiusが提携",
+    summary: "企業が自分で管理できるAIを、より使いやすく",
+    categories: ["STRATEGY", "TECHNOLOGY"],
+    images: [
+      {
+        src: "/research/2026-09-08-palantir-nebius-partnership/01.jpg",
+        width: 1179,
+        height: 1453,
+        alt: "PalantirとNebiusがSovereign AIインフラで提携",
+      },
+    ],
+  },
+  {
     slug: "2026-09-03-pwc-palantir-partnership",
     date: "2026-09-03",
     displayDate: "2026.09.03",
@@ -80,6 +130,40 @@ export const RESEARCH_MATERIALS: ResearchMaterial[] = [
         width: 1179,
         height: 1757,
         alt: "30日足らずで2回目のSovereignty Bootcampを開催",
+      },
+    ],
+  },
+  {
+    slug: "2026-08-03-q2-2026-financial-strength",
+    date: "2026-08-03",
+    displayDate: "2026.08.03",
+    title: "$PLTR Q2 2026 財務の強さ",
+    summary: "手元資金、Debtゼロ、本業の現金創出力",
+    categories: ["FINANCIALS"],
+    images: [
+      {
+        src: "/research/2026-08-03-q2-2026-financial-strength/01.png",
+        width: 1122,
+        height: 1402,
+        alt: "PLTR Q2 2026の財務の強さ",
+      },
+      {
+        src: "/research/2026-08-03-q2-2026-financial-strength/02.png",
+        width: 1122,
+        height: 1402,
+        alt: "Palantirの財務基盤の強さ",
+      },
+      {
+        src: "/research/2026-08-03-q2-2026-financial-strength/03.png",
+        width: 1122,
+        height: 1402,
+        alt: "Palantirの本業の現金創出力",
+      },
+      {
+        src: "/research/2026-08-03-q2-2026-financial-strength/04.png",
+        width: 1122,
+        height: 1402,
+        alt: "Palantirの財務指標が示す成長力と守りの強さ",
       },
     ],
   },
