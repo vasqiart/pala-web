@@ -42,7 +42,7 @@ export default function StoriesGallery({ stories, readerDecorations }: { stories
                   <Image src={story.avatar} alt="" width={88} height={88} sizes="88px" className={styles.avatar} />
                   <span><span className={styles.name}>{story.name}</span><span className={styles.handle}>{story.handle}</span></span>
                 </span>
-                {story.quote && <span className={styles.quote}>{story.quote}</span>}
+                {story.quote && <span className={styles.quote}><span className={styles.quoteTitle} style={{ textDecorationColor: story.quoteUnderlineColor }}>{story.quote}</span></span>}
                 <span className={styles.read}>READ STORY <span aria-hidden="true">→</span></span>
               </button>
             </div>

@@ -4,6 +4,7 @@ export type Story = {
   handle: string;
   avatar: string;
   quote?: string;
+  quoteUnderlineColor?: string;
   title?: string;
   decoration?: string;
   readerDecoration?: string;
@@ -20,7 +21,8 @@ export const STORIES: Story[] = [{
   name: "ぱらどっぐ",
   handle: "@PLTR_Dog",
   avatar: "/images/stories/profiles/pltr-dog.png",
-  quote: "調べれば調べるほどPalantirを好きになっていく。",
+  quote: "全財産を捧げよ",
+  quoteUnderlineColor: "#BA55D3",
   paragraphs: [
     "Peter Thielの「ZERO to ONE」を読んで、ずっと彼をウォッチしていました。\nその彼がPalantirという創業するというニュースを聞いたのがこの企業を知ったきっかけです。\nPalantirへの投資を決めた理由は、上場後にAlex Karpのインタビューを初めて聞いた時でした。\nPeter ThielとAlex Karp、この二人は当時のテック企業のCEOたちとは何か異質だと感じたことが決め手です。",
     "Palantirの魅力は、理念、創業者、経営陣、株主、事業内容の全てです。\n投資をしてみて思うことは、調べれば調べるほどPalantirを好きになっていくことです。\nそして何より、大きな大きな経済的リターン（まだ含み益）を得たことは本当に嬉しい。",
