@@ -1,5 +1,5 @@
-.page { min-height: 100dvh; background: #fafafa; padding: 100px 24px 90px; color: #1f2937; }
-.heading h1 { font-size: 24px; font-weight: 600; }
+.page { min-height: 100dvh; background: #fafafa; padding: 88px 24px 90px; color: #1f2937; }
+.heading h1 { font-size: 24px; line-height: 32px; font-weight: 600; }
 .heading p { margin-top: 4px; font-size: 14px; color: #6b7280; }
 .gallery { max-width: 1320px; margin: 36px auto 0; }
 .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 330px)); gap: 78px 32px; margin-top: 94px; }
@@ -36,7 +36,7 @@
 @keyframes expand-story { from { opacity: .4; transform: translate(var(--start-x,0px),var(--start-y,20px)) scale(var(--start-scale,.9)); } to { opacity: 1; transform: translate(0,0) scale(1); } }
 @media (max-width: 1023px) { .grid { grid-template-columns: repeat(2,minmax(0,330px)); } }
 @media (max-width: 639px) {
- .page { padding: 92px 20px 64px; } .heading h1 { font-size: 20px; } .gallery { margin-top: 28px; }
+ .page { padding: 80px 16px 64px; } .heading h1 { font-size: 20px; line-height: 28px; } .gallery { margin-top: 28px; }
  .grid { grid-template-columns: minmax(0,330px); justify-content: center; gap: 88px; margin-top: 104px; padding: 0 6px; }
  .card { min-height: 224px; padding: 20px 26px; } .quote { font-size: 17px; } .avatar { width: 68px; height: 68px; } .profile { gap: 16px; } .name { font-size: 17px; }
  .reader { width: calc(100vw - 24px); max-height: calc(100dvh - 32px); border-radius: 26px; }

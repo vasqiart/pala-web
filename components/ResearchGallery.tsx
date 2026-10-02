@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useMemo, useState } from "react";
 import ResearchLightbox from "@/components/ResearchLightbox";
+import PageHeading from "@/components/PageHeading";
 import {
   RESEARCH_CATEGORIES,
   type ResearchMaterial,
@@ -34,13 +35,9 @@ export default function ResearchGallery({ materials }: Props) {
   return (
     <>
       <main className="relative min-h-screen w-full bg-[#fafafa] pt-16">
+        <PageHeading title="RESEARCH" subtitle="Original Research" />
         <div className="mx-auto flex w-full max-w-[1680px] min-w-0 flex-col items-start md:flex-row">
-          <aside className="w-full shrink-0 px-5 pb-3 pt-7 md:sticky md:top-16 md:w-72 md:px-6 md:py-9">
-            <h1 className="text-xl font-semibold text-gray-800 md:text-2xl">
-              RESEARCH
-            </h1>
-            <p className="mt-1 text-sm text-gray-500">Original Research</p>
-
+          <aside className="w-full shrink-0 px-5 pb-3 md:sticky md:top-16 md:w-72 md:px-6">
             <div
               className="mt-5 flex flex-wrap gap-2"
               role="group"

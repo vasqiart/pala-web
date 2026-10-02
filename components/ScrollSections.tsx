@@ -6,6 +6,7 @@ import RotatingCard from "./RotatingCard";
 import SharePriceCard from "./SharePriceCard";
 import ValuationCard from "./ValuationCard";
 import EarningsSummaryCard from "./EarningsSummaryCard";
+import PageHeading from "./PageHeading";
 
 type Props = {
   sections: PageSections;
@@ -41,14 +42,7 @@ export default function ScrollSections({
         <div className="h-[100dvh] md:h-screen w-full shrink-0" aria-hidden />
       )}
       {!topSpacer && pageTitle && (
-        <header className="px-4 pb-6 pt-4 md:px-6 md:pt-6">
-          <h1 className="text-xl font-semibold text-gray-800 md:text-2xl">
-            {pageTitle}
-          </h1>
-          {pageSubtitle && (
-            <p className="mt-1 text-sm text-gray-500">{pageSubtitle}</p>
-          )}
-        </header>
+        <PageHeading title={pageTitle} subtitle={pageSubtitle} />
       )}
       {sections.map((section, index) => {
         const isEarningsCard = EARNINGS_CARD_IDS.has(section.id);

@@ -10,7 +10,7 @@ export default function CompanyPage() {
         <ScrollSections
           sections={COMPANY_SECTIONS}
           topSpacer={false}
-          pageTitle="Palantir"
+          pageTitle="PALANTIR"
           pageSubtitle="Company Profile"
         />
       </div>
