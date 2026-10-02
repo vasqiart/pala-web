@@ -2,18 +2,22 @@
 .heading h1 { font-size: 24px; font-weight: 600; }
 .heading p { margin-top: 4px; font-size: 14px; color: #6b7280; }
 .gallery { max-width: 1320px; margin: 36px auto 0; }
-.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 78px 32px; margin-top: 94px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 330px)); gap: 78px 32px; margin-top: 94px; }
 .cardWrap { position: relative; isolation: isolate; }
 .card { position: relative; display: flex; flex-direction: column; width: 100%; min-height: 248px; padding: 20px 30px; border-radius: 32px; background: white; text-align: left; box-shadow: 0 8px 40px rgba(0,0,0,.07), 0 0 0 1px rgba(0,0,0,.025); cursor: pointer; transition: transform .25s, box-shadow .25s; }
-.card:hover { transform: translateY(-4px); box-shadow: 0 14px 44px rgba(0,0,0,.10); }
+.card:hover, .card:focus-visible { transform: translateY(-4px); box-shadow: 0 0 0 1px var(--story-accent), 0 0 18px color-mix(in srgb, var(--story-accent) 28%, transparent), 0 14px 44px rgba(0,0,0,.08); }
+.card > .card:focus-visible { outline-color: var(--story-accent); }
+.profile { align-self: center; }
 .card:focus-visible, .close:focus-visible { outline: 2px solid #6b7280; outline-offset: 5px; }
 .profile { display: flex; align-items: center; gap: 20px; }
 .avatar { width: 80px; height: 80px; border-radius: 50%; background: #f3f4f6; object-fit: contain; padding: 7px; flex-shrink: 0; }
 .name { display: block; font-size: 19px; font-weight: 600; }
 .handle { display: block; margin-top: 4px; font-size: 14px; color: #6b7280; }
-.quote { display: block; margin: 16px 0 18px; font-size: 18px; line-height: 1.8; }
-.quoteTitle { white-space: nowrap; font-weight: 400; text-decoration-line: underline; text-decoration-thickness: 4px; text-underline-offset: 5px; text-decoration-skip-ink: none; }
-.read { display: inline-flex; align-items: center; gap: 16px; align-self: flex-start; border: 1px solid #d8dce1; border-radius: 999px; padding: 8px 18px; font-size: 11px; letter-spacing: .06em; background: white; }
+.quote { display: flex; align-items: center; justify-content: center; flex: 1; min-height: 50px; margin: 16px 0 18px; font-size: 18px; line-height: 1.8; }
+.quoteGroup { display: inline-flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--story-accent); padding-bottom: 2px; }
+.paw { width: 20px; height: 20px; flex-shrink: 0; color: #9ca3af; }
+.quoteTitle { white-space: nowrap; font-weight: 400; }
+.read { display: inline-flex; align-items: center; gap: 16px; align-self: center; border: 1px solid #d8dce1; border-radius: 999px; padding: 8px 18px; font-size: 11px; letter-spacing: .06em; background: white; }
 .peeker { position: absolute; z-index: -1; right: 28px; top: -89px; width: 128px; height: 103px; overflow: hidden; pointer-events: none; }
 .peekerImage { width: 128px; height: auto; }
 .resting { position: absolute; right: 12px; bottom: -12px; width: 112px; height: 112px; object-fit: contain; pointer-events: none; }
@@ -30,10 +34,10 @@
 .prose p { white-space: pre-line; margin-bottom: 24px; }
 .readerDog { display: block; margin-left: auto; height: 92px; width: 112px; object-fit: contain; }
 @keyframes expand-story { from { opacity: .4; transform: translate(var(--start-x,0px),var(--start-y,20px)) scale(var(--start-scale,.9)); } to { opacity: 1; transform: translate(0,0) scale(1); } }
-@media (max-width: 1023px) { .grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (max-width: 1023px) { .grid { grid-template-columns: repeat(2,minmax(0,330px)); } }
 @media (max-width: 639px) {
  .page { padding: 92px 20px 64px; } .heading h1 { font-size: 20px; } .gallery { margin-top: 28px; }
- .grid { grid-template-columns: minmax(0,1fr); gap: 88px; margin-top: 104px; padding: 0 6px; }
+ .grid { grid-template-columns: minmax(0,330px); justify-content: center; gap: 88px; margin-top: 104px; padding: 0 6px; }
  .card { min-height: 224px; padding: 20px 26px; } .quote { font-size: 17px; } .avatar { width: 68px; height: 68px; } .profile { gap: 16px; } .name { font-size: 17px; }
  .reader { width: calc(100vw - 24px); max-height: calc(100dvh - 32px); border-radius: 26px; }
  .readerContent { padding: 32px 24px 14px; } .readerContent .profile { padding-right: 26px; } .readerTitle { font-size: 22px; } .prose { font-size: 15px; }
