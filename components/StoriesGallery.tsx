@@ -8,8 +8,8 @@ import styles from "@/components/stories.module.css";
 
 export type StoryOrigin = { left: number; top: number; width: number; height: number };
 
-export default function StoriesGallery({ stories }: { stories: Story[] }) {
-  const [selected, setSelected] = useState<{ story: Story; origin: StoryOrigin } | null>(null);
+export default function StoriesGallery({ stories, readerDecorations }: { stories: Story[]; readerDecorations: string[] }) {
+  const [selected, setSelected] = useState<{ story: Story; origin: StoryOrigin; readerDecoration?: string } | null>(null);
   const trigger = useRef<HTMLButtonElement | null>(null);
 
   return (
@@ -19,7 +19,6 @@ export default function StoriesGallery({ stories }: { stories: Story[] }) {
         <p>People &amp; Palantir</p>
       </div>
       <section aria-label="みんなのストーリー" className={styles.gallery}>
-        <p className={styles.intro}>パランティアに惹かれた、それぞれの理由。</p>
         <div className={styles.grid}>
           {stories.map((story) => (
             <div key={story.slug} className={styles.cardWrap}>
@@ -36,16 +35,15 @@ export default function StoriesGallery({ stories }: { stories: Story[] }) {
                 onClick={(event) => {
                   trigger.current = event.currentTarget;
                   const { left, top, width, height } = event.currentTarget.getBoundingClientRect();
-                  setSelected({ story, origin: { left, top, width, height } });
+                  setSelected({ story, origin: { left, top, width, height }, readerDecoration: story.readerDecoration ?? (readerDecorations.length ? readerDecorations[Math.floor(Math.random() * readerDecorations.length)] : undefined) });
                 }}
               >
                 <span className={styles.profile}>
                   <Image src={story.avatar} alt="" width={88} height={88} sizes="88px" className={styles.avatar} />
                   <span><span className={styles.name}>{story.name}</span><span className={styles.handle}>{story.handle}</span></span>
                 </span>
-                <span className={styles.quote}>{story.quote}</span>
+                {story.quote && <span className={styles.quote}>{story.quote}</span>}
                 <span className={styles.read}>READ STORY <span aria-hidden="true">→</span></span>
-                {story.restingImage && <Image src={story.restingImage} alt="" width={120} height={120} sizes="120px" className={styles.resting} />}
               </button>
             </div>
           ))}
@@ -63,7 +61,7 @@ export default function StoriesGallery({ stories }: { stories: Story[] }) {
           </div>
         )}
       </section>
-      {selected && <StoryReader story={selected.story} origin={selected.origin} onClose={() => { setSelected(null); trigger.current?.focus(); }} />}
+      {selected && <StoryReader story={selected.story} origin={selected.origin} decoration={selected.readerDecoration} onClose={() => { setSelected(null); trigger.current?.focus(); }} />}
     </main>
   );
 }

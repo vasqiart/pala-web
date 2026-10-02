@@ -7,7 +7,7 @@ import type { Story } from "@/lib/stories";
 import type { StoryOrigin } from "@/components/StoriesGallery";
 import styles from "@/components/stories.module.css";
 
-export default function StoryReader({ story, origin, onClose }: { story: Story; origin: StoryOrigin; onClose: () => void }) {
+export default function StoryReader({ story, origin, decoration, onClose }: { story: Story; origin: StoryOrigin; decoration?: string; onClose: () => void }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -33,7 +33,8 @@ export default function StoryReader({ story, origin, onClose }: { story: Story; 
     <dialog
       ref={dialogRef}
       className={styles.reader}
-      aria-labelledby="story-title"
+      aria-labelledby={story.title ? "story-title" : undefined}
+      aria-label={story.title ? undefined : `${story.name}のストーリー`}
       onCancel={(event) => { event.preventDefault(); onClose(); }}
       onClick={(event) => {
         if (event.target !== event.currentTarget) return;
@@ -47,13 +48,13 @@ export default function StoryReader({ story, origin, onClose }: { story: Story; 
           <Image src={story.avatar} alt="" width={88} height={88} sizes="88px" className={styles.avatar} />
           <div><p className={styles.name}>{story.name}</p><p className={styles.handle}>{story.handle}</p></div>
         </div>
-        <h2 id="story-title" className={styles.readerTitle}>{story.title || story.quote}</h2>
+        {story.title && <h2 id="story-title" className={styles.readerTitle}>{story.title}</h2>}
         {story.introduction && <div className={styles.hostIntro}>
           <h3>ぱらどっぐからひとこと</h3>
           <p>{story.introduction}</p>
         </div>}
         <div className={styles.prose}>{story.paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div>
-        <Image src={story.restingImage || "/images/paradog/fv/paradog-fv-07.png"} alt="" width={112} height={112} sizes="112px" className={styles.readerDog} />
+        {decoration && <Image src={decoration} alt="" width={112} height={112} sizes="112px" className={styles.readerDog} />}
       </article>
     </dialog>,
     document.body,
