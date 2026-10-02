@@ -13,6 +13,8 @@ const NAV_ITEMS = [
   { href: "/contracts", label: "CONTRACTS" },
   { href: "/karp", label: "KARP" },
   { href: "/research", label: "RESEARCH" },
+  { href: "/articles", label: "ARTICLES" },
+  { href: "/stories", label: "STORIES" },
 ] as const;
 
 export default function Header() {
@@ -66,12 +68,12 @@ export default function Header() {
       </Link>
 
       {/* PC: 横並びメニュー */}
-      <nav className="hidden items-center gap-1 md:flex">
+      <nav className="hidden items-center gap-1 min-[1440px]:flex">
         {NAV_ITEMS.map(({ href, label }) => (
           <Link
             key={href}
             href={href}
-            className={`rounded-2xl px-4 py-2 text-sm font-medium transition-colors ${
+            className={`rounded-2xl px-3 py-2 text-sm font-medium transition-colors ${
               pathname === href
                 ? "bg-gray-200 text-gray-800"
                 : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
@@ -91,7 +93,7 @@ export default function Header() {
       </nav>
 
       {/* SP: ハンバーガー */}
-      <div className="flex items-center gap-2 md:hidden">
+      <div className="flex items-center gap-2 min-[1440px]:hidden">
         <button
           type="button"
           onClick={() => setMobileOpen((o) => !o)}
@@ -120,10 +122,10 @@ export default function Header() {
       </div>
       {mobileOpen && (
         <div
-          className="absolute left-0 right-0 top-full border-t border-gray-200 bg-white/98 shadow-lg md:hidden"
+          className="absolute left-0 right-0 top-full border-t border-gray-200 bg-white/98 shadow-lg min-[1440px]:hidden"
           style={{ backdropFilter: "blur(8px)" }}
         >
-          <nav className="flex flex-col p-4">
+          <nav className="flex flex-col max-h-[calc(100dvh-72px)] overflow-y-auto p-4">
             {NAV_ITEMS.map(({ href, label }) => (
               <Link
                 key={href}

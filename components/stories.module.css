@@ -1,0 +1,49 @@
+.page { min-height: 100dvh; background: #fafafa; padding: 100px 24px 90px; color: #1f2937; }
+.heading h1 { font-size: 24px; font-weight: 600; }
+.heading p { margin-top: 4px; font-size: 14px; color: #6b7280; }
+.gallery { max-width: 1320px; margin: 36px auto 0; }
+.intro { font-size: 16px; color: #6b7280; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 78px 32px; margin-top: 94px; }
+.cardWrap { position: relative; isolation: isolate; }
+.card { position: relative; display: flex; flex-direction: column; width: 100%; min-height: 310px; padding: 30px; border-radius: 32px; background: white; text-align: left; box-shadow: 0 8px 40px rgba(0,0,0,.07), 0 0 0 1px rgba(0,0,0,.025); cursor: pointer; transition: transform .25s, box-shadow .25s; }
+.card:hover { transform: translateY(-4px); box-shadow: 0 14px 44px rgba(0,0,0,.10); }
+.card:focus-visible, .close:focus-visible { outline: 2px solid #6b7280; outline-offset: 5px; }
+.profile { display: flex; align-items: center; gap: 20px; }
+.avatar { width: 80px; height: 80px; border-radius: 50%; background: #f3f4f6; object-fit: contain; padding: 7px; flex-shrink: 0; }
+.name { display: block; font-size: 19px; font-weight: 600; }
+.handle { display: block; margin-top: 4px; font-size: 14px; color: #6b7280; }
+.quote { display: block; margin: 25px 0 24px; font-size: 18px; line-height: 1.8; flex: 1; }
+.read { display: inline-flex; align-items: center; gap: 16px; align-self: flex-start; border: 1px solid #d8dce1; border-radius: 999px; padding: 8px 18px; font-size: 11px; letter-spacing: .06em; background: white; }
+.peeker { position: absolute; z-index: -1; right: 28px; top: -89px; width: 128px; height: 103px; overflow: hidden; pointer-events: none; }
+.peekerImage { width: 128px; height: auto; }
+.resting { position: absolute; right: 12px; bottom: -12px; width: 112px; height: 112px; object-fit: contain; pointer-events: none; }
+.reader { position: fixed; inset: 0; width: min(820px, calc(100vw - 48px)); max-width: none; max-height: calc(100dvh - 80px); margin: auto; padding: 0; border: none; border-radius: 32px; background: #fff; color: #1f2937; overflow: auto; overscroll-behavior: contain; box-shadow: 0 20px 70px rgba(0,0,0,.12); }
+.reader::backdrop { background: rgba(255,255,255,.70); backdrop-filter: blur(3px); }
+.opening { animation: expand-story .35s cubic-bezier(.2,.7,.2,1) both; }
+.close { position: sticky; top: 18px; float: right; z-index: 2; margin: 18px 18px -62px 0; width: 44px; height: 44px; border-radius: 50%; background: #f0f1f3; color: #1f2937; font-size: 28px; cursor: pointer; }
+.close:hover { background: #e5e7eb; }
+.readerContent { padding: 42px 48px 18px; }
+.readerTitle { margin-top: 18px; font-size: 28px; line-height: 1.55; font-weight: 600; }
+.hostIntro { margin-top: 28px; padding-bottom: 28px; border-bottom: 1px solid #e5e7eb; color: #6b7280; font-size: 14px; line-height: 1.9; }
+.hostIntro h3 { font-weight: 600; margin-bottom: 6px; }
+.prose { margin-top: 28px; font-size: 16px; line-height: 2; overflow-wrap: anywhere; }
+.prose p { white-space: pre-line; margin-bottom: 24px; }
+.readerDog { display: block; margin-left: auto; height: 92px; width: 112px; object-fit: contain; }
+@keyframes expand-story { from { opacity: .4; transform: translate(var(--start-x,0px),var(--start-y,20px)) scale(var(--start-scale,.9)); } to { opacity: 1; transform: translate(0,0) scale(1); } }
+@media (max-width: 1023px) { .grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (max-width: 639px) {
+ .page { padding: 92px 20px 64px; } .heading h1 { font-size: 20px; } .gallery { margin-top: 28px; } .intro { font-size: 14px; }
+ .grid { grid-template-columns: minmax(0,1fr); gap: 88px; margin-top: 104px; padding: 0 6px; }
+ .card { min-height: 280px; padding: 26px; } .quote { font-size: 17px; } .avatar { width: 68px; height: 68px; } .profile { gap: 16px; } .name { font-size: 17px; }
+ .reader { width: calc(100vw - 24px); max-height: calc(100dvh - 32px); border-radius: 26px; }
+ .readerContent { padding: 32px 24px 14px; } .readerContent .profile { padding-right: 26px; } .readerTitle { font-size: 22px; } .prose { font-size: 15px; }
+}
+@media (prefers-reduced-motion: reduce) { .opening { animation: none; } .cardWrap, .card { transition: none; } }
+
+.grid:empty { display: none; }
+.emptyWrap { position: relative; isolation: isolate; max-width: 600px; margin: 150px auto 0; }
+.emptyPeeker { position: absolute; z-index: -1; top: -89px; right: 44px; width: 128px; height: 103px; overflow: hidden; }
+.empty { padding: 56px 28px; background: white; border-radius: 32px; text-align: center; box-shadow: 0 8px 40px rgba(0,0,0,.06); }
+.emptyLabel { font-size: 11px; letter-spacing: .12em; color: #6b7280; }
+.empty h2 { margin-top: 18px; font-size: 18px; font-weight: 500; }
+.empty > p:last-child { margin-top: 16px; font-size: 14px; line-height: 2; color: #6b7280; }
