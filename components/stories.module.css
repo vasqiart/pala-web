@@ -4,7 +4,7 @@
 .gallery { max-width: 1320px; margin: 36px auto 0; }
 .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 330px)); gap: 78px 32px; margin-top: 94px; }
 .cardWrap { position: relative; isolation: isolate; }
-.card { position: relative; display: flex; flex-direction: column; width: 100%; min-height: 248px; padding: 20px 30px; border-radius: 32px; background: white; text-align: left; box-shadow: 0 8px 40px rgba(0,0,0,.07), 0 0 0 1px rgba(0,0,0,.025); cursor: pointer; transition: transform .25s, box-shadow .25s; }
+.card { position: relative; display: flex; flex-direction: column; width: 100%; min-height: 248px; padding: 20px 30px; border-radius: 32px; background: white; text-align: left; box-shadow: 0 8px 40px rgba(0,0,0,.07), 0 0 0 1px rgba(31,41,55,.18); cursor: pointer; transition: transform .25s, box-shadow .25s; }
 .card:hover, .card:focus-visible { transform: translateY(-4px); box-shadow: 0 0 0 1px var(--story-accent), 0 0 18px color-mix(in srgb, var(--story-accent) 28%, transparent), 0 14px 44px rgba(0,0,0,.08); }
 .card > .card:focus-visible { outline-color: var(--story-accent); }
 .profile { align-self: center; }
