@@ -1,6 +1,9 @@
 import { randomInt } from "node:crypto";
 import type { Metadata } from "next";
+import BackgroundParadogs from "@/components/BackgroundParadogs";
+import BackgroundPortal from "@/components/BackgroundPortal";
 import StoriesGallery from "@/components/StoriesGallery";
+import { STORIES_BG_IMAGES } from "@/lib/storiesBackgroundImages";
 import { getStoryDecorations } from "@/lib/storyDecorations";
 import { STORIES } from "@/lib/stories";
 
@@ -20,5 +23,23 @@ export default async function StoriesPage() {
     ...story,
     decoration: story.decoration ?? (decorations.length ? decorations[randomInt(decorations.length)] : undefined),
   }));
-  return <StoriesGallery stories={decoratedStories} readerDecorations={readerDecorations} />;
+  return (
+    <>
+      <BackgroundPortal usePortalOnMobile>
+        <BackgroundParadogs
+          imagePaths={[...STORIES_BG_IMAGES]}
+          count={14}
+          placementMode="collisionFree"
+          sizeScale={1.08}
+          densityMultiplier={1.2}
+          layoutPreset="organic"
+          minCountMobile={11}
+          seed={20261004}
+          avoidSelector="[data-background-avoid]"
+          topBandCount={2}
+        />
+      </BackgroundPortal>
+      <StoriesGallery stories={decoratedStories} readerDecorations={readerDecorations} />
+    </>
+  );
 }

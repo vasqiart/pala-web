@@ -84,9 +84,13 @@ type Props = {
   /** 生成密度の倍率（collisionFree 時に適用。1 = 既存どおり） */
   densityMultiplier?: number;
   /** 配置の軽いバリエーション */
-  layoutPreset?: "default" | "sharePrice";
+  layoutPreset?: "default" | "sharePrice" | "organic";
   /** モバイル時のみ、この数以上を表示する（collisionFree 時。省略時は従来どおり） */
   minCountMobile?: number;
+  /** 背景画像を重ねない要素を指定するCSSセレクター */
+  avoidSelector?: string;
+  /** 画面上部の空白を防ぐため、上部帯へ最低限配置する数 */
+  topBandCount?: number;
 };
 
 /**
@@ -174,8 +178,9 @@ function computeCollisionFreePositions(
   seed: number,
   _sizeScale: number,
   densityMultiplier: number,
-  layoutPreset: "default" | "sharePrice",
-  minCountMobile?: number
+  layoutPreset: "default" | "sharePrice" | "organic",
+  minCountMobile?: number,
+  avoidSelector?: string
 ): PositionItem[] {
   if (typeof window === "undefined") return [];
   const vw = window.innerWidth;
@@ -209,6 +214,27 @@ function computeCollisionFreePositions(
   const cellW = usableW / gridX;
   const cellH = usableH / gridY;
   const charSize = Math.min(cellW, cellH) * 0.9;
+  const avoidRects = avoidSelector
+    ? Array.from(document.querySelectorAll(avoidSelector)).map((element) => {
+        const rect = element.getBoundingClientRect();
+        const padding = 14;
+        return {
+          left: rect.left - padding,
+          right: rect.right + padding,
+          top: rect.top - padding,
+          bottom: rect.bottom + padding,
+        };
+      })
+    : [];
+  const halfCharSize = charSize * 0.5;
+  const overlapsAvoidedContent = (x: number, y: number) =>
+    avoidRects.some(
+      (rect) =>
+        x + halfCharSize > rect.left &&
+        x - halfCharSize < rect.right &&
+        y + halfCharSize > rect.top &&
+        y - halfCharSize < rect.bottom
+    );
   const minDistPx = Math.min(
     MIN_DISTANCE_PX_MAX,
     Math.max(MIN_DISTANCE_PX_MIN, charSize)
@@ -237,6 +263,32 @@ function computeCollisionFreePositions(
 
   const placed: Array<{ x: number; y: number }> = [];
 
+  const fillOrganic = (): void => {
+    const candidateTrials = 80;
+    while (placed.length < targetCount) {
+      let best: { x: number; y: number } | null = null;
+      let bestDistance = -1;
+
+      for (let i = 0; i < candidateTrials; i++) {
+        const x = margin + rnd() * usableW;
+        const y = margin + rnd() * usableH;
+        if (!inBounds(x, y) || overlapsAvoidedContent(x, y)) continue;
+
+        const nearestDistance = placed.length
+          ? Math.min(...placed.map((point) => dist(point, { x, y })))
+          : Number.POSITIVE_INFINITY;
+
+        if (nearestDistance > bestDistance) {
+          best = { x, y };
+          bestDistance = nearestDistance;
+        }
+      }
+
+      if (!best) break;
+      placed.push(best);
+    }
+  };
+
   const tryFill = (minD: number): void => {
     for (const [c, r] of cells) {
       if (placed.length >= targetCount) break;
@@ -249,6 +301,7 @@ function computeCollisionFreePositions(
         const x = cellLeft + u * cellW;
         const y = cellTop + v * cellH;
         if (!inBounds(x, y)) continue;
+        if (overlapsAvoidedContent(x, y)) continue;
         if (placed.some((p) => dist(p, { x, y }) < minD)) continue;
         placed.push({ x, y });
         ok = true;
@@ -261,6 +314,7 @@ function computeCollisionFreePositions(
           const x = cellLeft + u * cellW;
           const y = cellTop + v * cellH;
           if (!inBounds(x, y)) continue;
+          if (overlapsAvoidedContent(x, y)) continue;
           if (placed.some((p) => dist(p, { x, y }) < minD * 0.85)) continue;
           placed.push({ x, y });
           break;
@@ -269,14 +323,18 @@ function computeCollisionFreePositions(
     }
   };
 
-  tryFill(minDistPx);
-  if (placed.length < targetCount) {
-    placed.length = 0;
-    tryFill(minDistPx * 0.88);
-  }
-  if (placed.length < targetCount) {
-    placed.length = 0;
-    tryFill(minDistPx * 0.75);
+  if (layoutPreset === "organic") {
+    fillOrganic();
+  } else {
+    tryFill(minDistPx);
+    if (placed.length < targetCount) {
+      placed.length = 0;
+      tryFill(minDistPx * 0.88);
+    }
+    if (placed.length < targetCount) {
+      placed.length = 0;
+      tryFill(minDistPx * 0.75);
+    }
   }
   const result = placed.slice(0, targetCount);
 
@@ -352,6 +410,8 @@ export default function BackgroundParadogs({
   densityMultiplier = 1,
   layoutPreset = "default",
   minCountMobile,
+  avoidSelector,
+  topBandCount,
 }: Props) {
   const [collisionPositions, setCollisionPositions] = useState<PositionItem[] | null>(null);
   const seedRef = useRef(seed);
@@ -365,10 +425,11 @@ export default function BackgroundParadogs({
       sizeScale,
       densityMultiplier,
       layoutPreset,
-      minCountMobile
+      minCountMobile,
+      avoidSelector
     );
     setCollisionPositions(next);
-  }, [imagePaths, count, sizeScale, densityMultiplier, layoutPreset, minCountMobile]);
+  }, [imagePaths, count, sizeScale, densityMultiplier, layoutPreset, minCountMobile, avoidSelector]);
 
   useLayoutEffect(() => {
     if (placementMode !== "collisionFree") return;
@@ -445,12 +506,47 @@ export default function BackgroundParadogs({
 
   const isAbout = placementMode === "collisionFree";
   const opacity = isAbout ? OPACITY_ABOUT : OPACITY;
+  const topBandItems = useMemo(() => {
+    if (!topBandCount || imagePaths.length === 0) return [];
+    const rnd = mulberry32(seed + 61003);
+    return Array.from({ length: topBandCount }, (_, i) => {
+      const segment = (i + 0.5) / topBandCount;
+      return {
+        src: imagePaths[(i * 2 + 1) % imagePaths.length]!,
+        x: 29 + segment * 61 + (rnd() - 0.5) * 3.5,
+        y: 15 + ((i * 7) % 10) + (rnd() - 0.5) * 2.5,
+        rotate: (rnd() - 0.5) * 12,
+        scale: 0.92 + rnd() * 0.14,
+      };
+    });
+  }, [imagePaths, seed, topBandCount]);
   return (
     <div
       className="pointer-events-none fixed inset-0"
       style={{ zIndex: 0 }}
       aria-hidden
     >
+      {topBandItems.map((item, i) => (
+        <div
+          key={`top-band-${i}`}
+          data-about-bg="true"
+          className="absolute hidden md:block md:will-change-transform"
+          style={{
+            left: `${item.x}%`,
+            top: `${item.y}%`,
+            transform: `translate(-50%, -50%) rotate(${item.rotate}deg) scale(${item.scale})`,
+            width: `clamp(${minPx}px, ${vwNum}vw, ${maxPx}px)`,
+            height: `clamp(${minPx}px, ${vwNum}vw, ${maxPx}px)`,
+          }}
+        >
+          <img
+            src={item.src}
+            alt=""
+            className="h-full w-full object-contain"
+            style={{ opacity: OPACITY_ABOUT }}
+          />
+        </div>
+      ))}
       {positions != null &&
         positions.length > 0 &&
         positions.map((item, i) => (
