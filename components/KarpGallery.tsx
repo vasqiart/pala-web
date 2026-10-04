@@ -19,11 +19,11 @@ export default function KarpGallery({ images, onSelect }: Props) {
 
   const gridClass =
     GALLERY_LAYOUT_MODE === "grid"
-      ? "grid w-full max-w-6xl grid-cols-2 gap-4 px-4 py-8 sm:grid-cols-3 md:gap-6 lg:grid-cols-4 items-center"
-      : "grid w-full max-w-6xl grid-cols-2 gap-4 px-4 py-8 sm:grid-cols-3 md:gap-6 lg:grid-cols-4 items-center";
+      ? "grid w-full max-w-6xl grid-cols-2 items-center gap-3 px-4 py-4 sm:grid-cols-3 sm:gap-4 sm:py-8 md:gap-6 lg:grid-cols-4"
+      : "grid w-full max-w-6xl grid-cols-2 items-center gap-3 px-4 py-4 sm:grid-cols-3 sm:gap-4 sm:py-8 md:gap-6 lg:grid-cols-4";
 
   return (
-    <div className="flex justify-center">
+    <div className="flex w-full justify-center">
       <div className={gridClass}>
         {images.map((img, index) => (
           <button

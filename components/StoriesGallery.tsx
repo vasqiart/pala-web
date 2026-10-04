@@ -18,16 +18,16 @@ export default function StoriesGallery({ stories, readerDecorations }: { stories
 
   return (
     <main className={styles.page}>
-      <div className={styles.heading}>
+      <div className={styles.heading} data-background-avoid>
         <h1>STORIES</h1>
         <p>People &amp; Palantir</p>
       </div>
       <section aria-label="みんなのストーリー" className={styles.gallery}>
         <div className={styles.grid}>
           {stories.map((story) => (
-            <div key={story.slug} className={styles.cardWrap}>
+            <div key={story.slug} className={styles.cardWrap} data-background-avoid>
               {story.decoration && (
-                <div className={styles.peeker} aria-hidden="true">
+                <div className={styles.peeker} data-background-avoid aria-hidden="true">
                   <Image src={story.decoration} alt="" width={1152} height={1344} sizes="120px" className={styles.peekerImage} />
                 </div>
               )}
@@ -55,10 +55,10 @@ export default function StoriesGallery({ stories, readerDecorations }: { stories
         </div>
         {stories.length === 0 && (
           <div className={styles.emptyWrap}>
-            <div className={styles.emptyPeeker} aria-hidden="true">
+            <div className={styles.emptyPeeker} data-background-avoid aria-hidden="true">
               <Image src="/images/stories/decorations/paradog-peeking-fullbody-v1.png" alt="" width={1152} height={1344} sizes="128px" className={styles.peekerImage} />
             </div>
-            <div className={styles.empty}>
+            <div className={styles.empty} data-background-avoid>
               <p className={styles.emptyLabel}>COMING SOON</p>
               <h2>それぞれのストーリーを、ここに。</h2>
               <p>みなさんとパランティアの出会いや、惹かれた理由。<br />一人ひとりの言葉で、少しずつお届けしていきます。</p>

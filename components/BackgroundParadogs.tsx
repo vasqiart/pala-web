@@ -87,6 +87,12 @@ type Props = {
   layoutPreset?: "default" | "sharePrice" | "organic";
   /** モバイル時のみ、この数以上を表示する（collisionFree 時。省略時は従来どおり） */
   minCountMobile?: number;
+  /** collisionFree 時の表示上限。省略時は従来どおり */
+  maxCount?: number;
+  /** モバイル時の表示上限。省略時は maxCount または従来どおり */
+  maxCountMobile?: number;
+  /** キャラクター全体を画面内へ収める */
+  containWithinViewport?: boolean;
   /** 背景画像を重ねない要素を指定するCSSセレクター */
   avoidSelector?: string;
   /** 画面上部の空白を防ぐため、上部帯へ最低限配置する数 */
@@ -180,6 +186,9 @@ function computeCollisionFreePositions(
   densityMultiplier: number,
   layoutPreset: "default" | "sharePrice" | "organic",
   minCountMobile?: number,
+  maxCount?: number,
+  maxCountMobile?: number,
+  containWithinViewport?: boolean,
   avoidSelector?: string
 ): PositionItem[] {
   if (typeof window === "undefined") return [];
@@ -211,6 +220,10 @@ function computeCollisionFreePositions(
   if (!isDesktopLike && minCountMobile != null && minCountMobile > 0) {
     targetCount = Math.max(targetCount, Math.min(minCountMobile, imagePaths.length));
   }
+  const countLimit = !isDesktopLike ? maxCountMobile ?? maxCount : maxCount;
+  if (countLimit != null && countLimit > 0) {
+    targetCount = Math.min(targetCount, countLimit);
+  }
   const cellW = usableW / gridX;
   const cellH = usableH / gridY;
   const charSize = Math.min(cellW, cellH) * 0.9;
@@ -240,8 +253,12 @@ function computeCollisionFreePositions(
     Math.max(MIN_DISTANCE_PX_MIN, charSize)
   );
 
+  const inset = containWithinViewport ? halfCharSize : 0;
   const inBounds = (x: number, y: number) =>
-    x >= margin && x <= vw - margin && y >= margin && y <= vh - margin;
+    x >= margin + inset &&
+    x <= vw - margin - inset &&
+    y >= margin + inset &&
+    y <= vh - margin - inset;
 
   const cells: Array<[number, number]> = [];
   for (let r = 0; r < gridY; r++) {
@@ -376,7 +393,10 @@ function computeCollisionFreePositions(
       const newX = Math.max(margin, Math.min(vw - margin, orig.x + dxVw * vw));
       const newY = Math.max(margin, Math.min(vh - margin, orig.y + dyVh * vh));
       const others = items.filter((_, i) => i !== idx);
-      if (others.every((o) => dist(o, { x: newX, y: newY }) >= minDistPx)) {
+      if (
+        !overlapsAvoidedContent(newX, newY) &&
+        others.every((o) => dist(o, { x: newX, y: newY }) >= minDistPx)
+      ) {
         items[idx] = { ...orig, x: newX, y: newY };
         done = true;
       }
@@ -410,6 +430,9 @@ export default function BackgroundParadogs({
   densityMultiplier = 1,
   layoutPreset = "default",
   minCountMobile,
+  maxCount,
+  maxCountMobile,
+  containWithinViewport = false,
   avoidSelector,
   topBandCount,
 }: Props) {
@@ -426,10 +449,13 @@ export default function BackgroundParadogs({
       densityMultiplier,
       layoutPreset,
       minCountMobile,
+      maxCount,
+      maxCountMobile,
+      containWithinViewport,
       avoidSelector
     );
     setCollisionPositions(next);
-  }, [imagePaths, count, sizeScale, densityMultiplier, layoutPreset, minCountMobile, avoidSelector]);
+  }, [imagePaths, count, sizeScale, densityMultiplier, layoutPreset, minCountMobile, maxCount, maxCountMobile, containWithinViewport, avoidSelector]);
 
   useLayoutEffect(() => {
     if (placementMode !== "collisionFree") return;

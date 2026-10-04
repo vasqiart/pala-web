@@ -31,12 +31,14 @@ export default async function StoriesPage() {
           count={14}
           placementMode="collisionFree"
           sizeScale={1.08}
-          densityMultiplier={1.2}
+          densityMultiplier={0.64}
           layoutPreset="organic"
-          minCountMobile={11}
-          seed={20261004}
-          avoidSelector="[data-background-avoid]"
-          topBandCount={2}
+          minCountMobile={7}
+          maxCount={14}
+          maxCountMobile={7}
+          containWithinViewport
+          seed={20261006}
+          avoidSelector="[data-background-avoid], header"
         />
       </BackgroundPortal>
       <StoriesGallery stories={decoratedStories} readerDecorations={readerDecorations} />

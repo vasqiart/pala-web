@@ -82,7 +82,7 @@ export default function KarpLightbox({
       }}
     >
       <div
-        className="relative flex max-h-[82vh] min-w-0 max-w-[min(88vw,1100px)] items-center justify-center overflow-hidden rounded-2xl p-2.5 transition-all duration-200"
+        className="relative flex max-h-[82vh] min-w-0 max-w-[94vw] items-center justify-center overflow-hidden rounded-2xl p-1.5 transition-all duration-200 sm:max-w-[min(88vw,1100px)] sm:p-2.5"
         style={{
           boxShadow: "0 20px 60px rgba(0,0,0,0.25)",
           background: "rgba(255,255,255,0.06)",
@@ -106,7 +106,7 @@ export default function KarpLightbox({
               e.stopPropagation();
               onPrev();
             }}
-            className="absolute left-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/20 text-white transition-colors hover:bg-white/35"
+            className="absolute left-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/30 text-white transition-colors hover:bg-black/45 sm:left-3 sm:h-9 sm:w-9"
             aria-label="前の写真"
           >
             <span className="text-lg leading-none" aria-hidden>
@@ -121,7 +121,7 @@ export default function KarpLightbox({
               e.stopPropagation();
               onNext();
             }}
-            className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/20 text-white transition-colors hover:bg-white/35"
+            className="absolute right-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/30 text-white transition-colors hover:bg-black/45 sm:right-3 sm:h-9 sm:w-9"
             aria-label="次の写真"
           >
             <span className="text-lg leading-none" aria-hidden>
@@ -135,7 +135,7 @@ export default function KarpLightbox({
             e.stopPropagation();
             onClose();
           }}
-          className="absolute right-2.5 top-2.5 flex h-7 w-7 items-center justify-center rounded-full border border-white/30 bg-white/20 text-white transition-colors hover:bg-white/40"
+          className="absolute right-2 top-2 flex h-10 w-10 items-center justify-center rounded-full border border-white/40 bg-black/35 text-white transition-colors hover:bg-black/50 sm:right-2.5 sm:top-2.5 sm:h-8 sm:w-8"
           aria-label="閉じる"
         >
           <span className="text-sm leading-none" aria-hidden>
