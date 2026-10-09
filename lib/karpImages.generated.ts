@@ -1,5 +1,15 @@
 /** KARP ギャラリー画像リスト。新規追加分は連番を維持したまま表示順の先頭へ置く。 */
 export const KARP_IMAGES = [
+  { id: "45", src: "/karp/karp-045.jpg", alt: "屋外でマイクを持つ、帽子とスーツ姿のAlex Karp" },
+  { id: "46", src: "/karp/karp-046.jpg", alt: "空を背景に片腕を高く上げるAlex Karp" },
+  { id: "47", src: "/karp/karp-047.jpg", alt: "屋外で複数のマイクに向かって話すAlex Karp" },
+  { id: "48", src: "/karp/karp-048.jpg", alt: "建物の入口で両腕を広げる、帽子とサングラス姿のAlex Karp" },
+  { id: "49", src: "/karp/karp-049.jpg", alt: "建物の入口で片手を上げるAlex Karp" },
+  { id: "50", src: "/karp/karp-050.jpg", alt: "帽子とサングラス姿で片手を上げるAlex Karp" },
+  { id: "51", src: "/karp/karp-051.jpg", alt: "着席して両手で身振りを交えながら話すAlex Karp" },
+  { id: "52", src: "/karp/karp-052.jpg", alt: "室内に立つ、白いTシャツ姿のAlex Karp" },
+  { id: "53", src: "/karp/karp-053.jpg", alt: "室内の出入口で両腕を広げるAlex Karp" },
+  { id: "54", src: "/karp/karp-054.jpg", alt: "木目の壁を背景にした、眼鏡姿のAlex Karpの肖像" },
   { id: "41", src: "/karp/karp-041.jpg", alt: "Alex Karp photo 041" },
   { id: "42", src: "/karp/karp-042.jpg", alt: "Alex Karp photo 042" },
   { id: "43", src: "/karp/karp-043.jpg", alt: "Alex Karp photo 043" },
