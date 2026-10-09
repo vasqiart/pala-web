@@ -1,5 +1,9 @@
 /** KARP ギャラリー画像リスト。新規追加分は連番を維持したまま表示順の先頭へ置く。 */
 export const KARP_IMAGES = [
+  { id: "55", src: "/karp/karp-055.webp", alt: "紫色のセーター姿で眼鏡を直すAlex Karp" },
+  { id: "56", src: "/karp/karp-056.webp", alt: "青いジャケットと帽子姿でVサインをするAlex Karp" },
+  { id: "57", src: "/karp/karp-057.jpg", alt: "テレビ番組のセットで着席し、横を向くAlex Karp" },
+  { id: "58", src: "/karp/karp-058.jpg", alt: "装飾のある壁とテーブルの前に座るAlex Karp" },
   { id: "48", src: "/karp/karp-048.webp", alt: "建物の入口で両腕を広げる、帽子とサングラス姿のAlex Karp" },
   { id: "49", src: "/karp/karp-049.jpg", alt: "建物の入口で片手を上げるAlex Karp" },
   { id: "50", src: "/karp/karp-050.jpg", alt: "帽子とサングラス姿で片手を上げるAlex Karp" },
