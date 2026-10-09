@@ -5,3 +5,6 @@ At task start, read `/Users/mr./codex-intelligence/AGENTS.md` and `/Users/mr./co
 
 ## STORIES
 Before adding or modifying STORIES cards, read `public/images/stories/ガイド・テンプレート/制作ルール.md` and follow its publishing, content, ordering and random decoration rules. Use `ストーリー記入シート.md` for supplied content; preserve unrelated local work.
+
+## RESEARCH
+Before adding or modifying RESEARCH materials, read `research-inbox/追加ルール.md`. Preserve existing gallery style and original inputs; check for duplicates before registration.

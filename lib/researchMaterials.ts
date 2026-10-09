@@ -30,6 +30,268 @@ export type ResearchMaterial = {
 
 export const RESEARCH_MATERIALS: ResearchMaterial[] = [
   {
+    "slug": "2026-10-09-map-tile-internationalization",
+    "date": "2026-10-09",
+    "displayDate": "2026.10.09",
+    "title": "地図タイルの国際化技術",
+    "summary": "ユーザーの言語に合わせて地図上の文字情報を切り替える特許出願",
+    "categories": [
+      "TECHNOLOGY"
+    ],
+    "images": [
+      {
+        "src": "/research/2026-10-09-map-tile-internationalization/01.jpg",
+        "width": 1179,
+        "height": 1460,
+        "alt": "地図タイルの国際化技術と多言語対応の仕組み"
+      }
+    ]
+  },
+  {
+    "slug": "2026-10-09-cloud-resource-management",
+    "date": "2026-10-09",
+    "displayDate": "2026.10.09",
+    "title": "クラウドリソース管理システム",
+    "summary": "クラウド上のデータバケットを安全に作成・管理する特許出願",
+    "categories": [
+      "TECHNOLOGY"
+    ],
+    "images": [
+      {
+        "src": "/research/2026-10-09-cloud-resource-management/01.jpg",
+        "width": 1179,
+        "height": 1462,
+        "alt": "クラウドリソース管理システムの仕組みと特徴"
+      }
+    ]
+  },
+  {
+    "slug": "2026-10-09-palantir-platforms-overview",
+    "date": "2026-10-09",
+    "displayDate": "2026.10.09",
+    "title": "Palantir主要製品まとめ",
+    "summary": "Foundry・AIP・Gotham・Apolloの役割を4枚で整理",
+    "categories": [
+      "TECHNOLOGY"
+    ],
+    "images": [
+      {
+        "src": "/research/2026-10-09-palantir-platforms-overview/01.jpg",
+        "width": 1179,
+        "height": 1453,
+        "alt": "Foundry：データと業務をつなぐ基盤"
+      },
+      {
+        "src": "/research/2026-10-09-palantir-platforms-overview/02.jpg",
+        "width": 1179,
+        "height": 1462,
+        "alt": "AIP：AIを現実の業務に参加させる"
+      },
+      {
+        "src": "/research/2026-10-09-palantir-platforms-overview/03.jpg",
+        "width": 1179,
+        "height": 1457,
+        "alt": "Gotham：防衛・安全保障の意思決定OS"
+      },
+      {
+        "src": "/research/2026-10-09-palantir-platforms-overview/04.jpg",
+        "width": 1179,
+        "height": 1452,
+        "alt": "Apollo：どこでも安全に動かし続ける"
+      }
+    ]
+  },
+  {
+    "slug": "2026-10-09-palantir-introduction",
+    "date": "2026-10-09",
+    "displayDate": "2026.10.09",
+    "title": "Palantirとは？",
+    "summary": "会社の成り立ち、創業者、主要プラットフォームを知る入門資料",
+    "categories": [
+      "STRATEGY",
+      "TECHNOLOGY"
+    ],
+    "images": [
+      {
+        "src": "/research/2026-10-09-palantir-introduction/01.jpg",
+        "width": 1179,
+        "height": 1459,
+        "alt": "Palantirの概要と名前の由来"
+      },
+      {
+        "src": "/research/2026-10-09-palantir-introduction/02.jpg",
+        "width": 1179,
+        "height": 1453,
+        "alt": "Peter ThielとAlex Karpの経歴"
+      },
+      {
+        "src": "/research/2026-10-09-palantir-introduction/03.jpg",
+        "width": 1179,
+        "height": 1463,
+        "alt": "Palantirは何をしている会社か"
+      },
+      {
+        "src": "/research/2026-10-09-palantir-introduction/04.jpg",
+        "width": 1179,
+        "height": 1468,
+        "alt": "Ontologyを中核とする主要4プラットフォーム"
+      }
+    ]
+  },
+  {
+    "slug": "2026-10-09-goldman-sachs-buy-upgrade",
+    "date": "2026-10-09",
+    "displayDate": "2026.10.09",
+    "title": "Goldman Sachsが$PLTRを格上げ",
+    "summary": "NeutralからBuyへ、目標株価230ドルと成長ドライバーを整理",
+    "categories": [
+      "FINANCIALS"
+    ],
+    "images": [
+      {
+        "src": "/research/2026-10-09-goldman-sachs-buy-upgrade/01.jpg",
+        "width": 1179,
+        "height": 1457,
+        "alt": "Goldman SachsによるBuyへの格上げと目標株価"
+      },
+      {
+        "src": "/research/2026-10-09-goldman-sachs-buy-upgrade/02.jpg",
+        "width": 1179,
+        "height": 1459,
+        "alt": "格上げの背景にある市場規模の拡大"
+      },
+      {
+        "src": "/research/2026-10-09-goldman-sachs-buy-upgrade/03.jpg",
+        "width": 1179,
+        "height": 1462,
+        "alt": "Goldman Sachsが見た成長ドライバー"
+      },
+      {
+        "src": "/research/2026-10-09-goldman-sachs-buy-upgrade/04.jpg",
+        "width": 1179,
+        "height": 1460,
+        "alt": "2027年に向けた評価と投資家の論点"
+      }
+    ]
+  },
+  {
+    "slug": "2026-10-09-ontology-explained",
+    "date": "2026-10-09",
+    "displayDate": "2026.10.09",
+    "title": "Ontologyとは何か",
+    "summary": "現実世界をモデル化し、データ・判断・行動をつなぐ仕組み",
+    "categories": [
+      "TECHNOLOGY"
+    ],
+    "images": [
+      {
+        "src": "/research/2026-10-09-ontology-explained/01.png",
+        "width": 1122,
+        "height": 1402,
+        "alt": "Ontologyが組織の現実世界を表現する仕組み"
+      },
+      {
+        "src": "/research/2026-10-09-ontology-explained/02.png",
+        "width": 1122,
+        "height": 1402,
+        "alt": "Object・Property・Linkの基本要素"
+      },
+      {
+        "src": "/research/2026-10-09-ontology-explained/03.png",
+        "width": 1122,
+        "height": 1402,
+        "alt": "意思決定を表すData・Logic・Actions・Security"
+      },
+      {
+        "src": "/research/2026-10-09-ontology-explained/04.png",
+        "width": 1122,
+        "height": 1402,
+        "alt": "AI時代にOntologyが重要になる理由"
+      }
+    ]
+  },
+  {
+    "slug": "2026-10-09-chipotle-foundry-food-safety",
+    "date": "2026-10-09",
+    "displayDate": "2026.10.09",
+    "title": "Chipotle × Palantir、何が分かった？",
+    "summary": "Foundryによる食品安全リスク管理の試験運用",
+    "categories": [
+      "TECHNOLOGY",
+      "STRATEGY"
+    ],
+    "images": [
+      {
+        "src": "/research/2026-10-09-chipotle-foundry-food-safety/01.png",
+        "width": 1122,
+        "height": 1402,
+        "alt": "ChipotleによるFoundryの食品安全リスク管理の試験運用"
+      }
+    ]
+  },
+  {
+    "slug": "2026-10-09-gartner-fde-warning",
+    "date": "2026-10-09",
+    "displayDate": "2026.10.09",
+    "title": "GartnerがFDEに警鐘",
+    "summary": "Agentic AIの予測と、PalantirのFDEを読み解く視点",
+    "categories": [
+      "TECHNOLOGY",
+      "STRATEGY"
+    ],
+    "images": [
+      {
+        "src": "/research/2026-10-09-gartner-fde-warning/01.png",
+        "width": 1122,
+        "height": 1402,
+        "alt": "GartnerのFDEとAgentic AIに関する予測"
+      },
+      {
+        "src": "/research/2026-10-09-gartner-fde-warning/02.png",
+        "width": 1122,
+        "height": 1402,
+        "alt": "PalantirのFDEを製品化と自走化から読み解く"
+      }
+    ]
+  },
+  {
+    "slug": "2026-10-09-armada-sovereign-ai",
+    "date": "2026-10-09",
+    "displayDate": "2026.10.09",
+    "title": "PalantirとArmadaが主権型AIで提携",
+    "summary": "AIのソフトウェアからインフラまで、自ら管理する基盤へ",
+    "categories": [
+      "STRATEGY",
+      "TECHNOLOGY"
+    ],
+    "images": [
+      {
+        "src": "/research/2026-10-09-armada-sovereign-ai/01.png",
+        "width": 1122,
+        "height": 1402,
+        "alt": "PalantirとArmadaの主権型AI提携"
+      },
+      {
+        "src": "/research/2026-10-09-armada-sovereign-ai/02.png",
+        "width": 1122,
+        "height": 1402,
+        "alt": "主権型AIのモデル・データ・インフラ管理"
+      },
+      {
+        "src": "/research/2026-10-09-armada-sovereign-ai/03.png",
+        "width": 1122,
+        "height": 1402,
+        "alt": "PalantirとArmadaが担うソフトウェアと設備"
+      },
+      {
+        "src": "/research/2026-10-09-armada-sovereign-ai/04.png",
+        "width": 1122,
+        "height": 1402,
+        "alt": "導入の迅速化と拠点分散の利点"
+      }
+    ]
+  },
+  {
     slug: "2026-09-10-nvidia-palantir-sovereign-intelligence",
     date: "2026-09-10",
     displayDate: "2026.09.10",
