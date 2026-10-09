@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 
 /** シード付き簡易乱数（再現可能な配置用） */
 function mulberry32(seed: number) {
@@ -79,6 +80,8 @@ type Props = {
   seed?: number;
   /** サイズ倍率（1 = TOP 同一。ABOUT は 1.1〜1.15 で少し大きく） */
   sizeScale?: number;
+  /** モバイル専用サイズ。指定時は実際の描画サイズで衝突を判定する */
+  mobileSizeScale?: number;
   /** 配置モード。collisionFree = 禁止領域・衝突回避・中心にも配置 */
   placementMode?: PlacementMode;
   /** 生成密度の倍率（collisionFree 時に適用。1 = 既存どおり） */
@@ -189,7 +192,8 @@ function computeCollisionFreePositions(
   maxCount?: number,
   maxCountMobile?: number,
   containWithinViewport?: boolean,
-  avoidSelector?: string
+  avoidSelector?: string,
+  mobileSizeScale?: number
 ): PositionItem[] {
   if (typeof window === "undefined") return [];
   const vw = window.innerWidth;
@@ -226,7 +230,16 @@ function computeCollisionFreePositions(
   }
   const cellW = usableW / gridX;
   const cellH = usableH / gridY;
-  const charSize = Math.min(cellW, cellH) * 0.9;
+  const useMobileSize = !isDesktopLike && mobileSizeScale != null;
+  const mobileMultiplier = (mobileSizeScale ?? 1) * ABOUT_SIZE_BOOST;
+  const mobileSize = Math.max(
+    Math.round(SIZE_MIN_PX * mobileMultiplier),
+    Math.min(Math.round(SIZE_MAX_PX * mobileMultiplier), vw * SIZE_VW * mobileMultiplier / 100)
+  );
+  // Include the largest scale jitter and rotation so the whole image clears content.
+  const charSize = useMobileSize
+    ? mobileSize * COLLISION_JITTER_SCALE[1]! * 1.16
+    : Math.min(cellW, cellH) * 0.9;
   const avoidRects = avoidSelector
     ? Array.from(document.querySelectorAll(avoidSelector)).map((element) => {
         const rect = element.getBoundingClientRect();
@@ -281,7 +294,7 @@ function computeCollisionFreePositions(
   const placed: Array<{ x: number; y: number }> = [];
 
   const fillOrganic = (): void => {
-    const candidateTrials = 80;
+    const candidateTrials = useMobileSize ? 240 : 80;
     while (placed.length < targetCount) {
       let best: { x: number; y: number } | null = null;
       let bestDistance = -1;
@@ -290,6 +303,9 @@ function computeCollisionFreePositions(
         const x = margin + rnd() * usableW;
         const y = margin + rnd() * usableH;
         if (!inBounds(x, y) || overlapsAvoidedContent(x, y)) continue;
+        if (useMobileSize && placed.some((point) =>
+          Math.abs(point.x - x) < charSize + 12 && Math.abs(point.y - y) < charSize + 12
+        )) continue;
 
         const nearestDistance = placed.length
           ? Math.min(...placed.map((point) => dist(point, { x, y })))
@@ -342,6 +358,15 @@ function computeCollisionFreePositions(
 
   if (layoutPreset === "organic") {
     fillOrganic();
+    if (useMobileSize && placed.length < targetCount) {
+      let best = [...placed];
+      for (let attempt = 0; attempt < 12 && best.length < targetCount; attempt++) {
+        placed.length = 0;
+        fillOrganic();
+        if (placed.length > best.length) best = [...placed];
+      }
+      placed.splice(0, placed.length, ...best);
+    }
   } else {
     tryFill(minDistPx);
     if (placed.length < targetCount) {
@@ -394,6 +419,9 @@ function computeCollisionFreePositions(
       const newY = Math.max(margin, Math.min(vh - margin, orig.y + dyVh * vh));
       const others = items.filter((_, i) => i !== idx);
       if (
+        (!useMobileSize || (inBounds(newX, newY) && others.every((o) =>
+          Math.abs(o.x - newX) >= charSize + 12 || Math.abs(o.y - newY) >= charSize + 12
+        ))) &&
         !overlapsAvoidedContent(newX, newY) &&
         others.every((o) => dist(o, { x: newX, y: newY }) >= minDistPx)
       ) {
@@ -426,6 +454,7 @@ export default function BackgroundParadogs({
   safeZone = DEFAULT_SAFE_ZONE,
   seed = 42,
   sizeScale = 1,
+  mobileSizeScale,
   placementMode = "random",
   densityMultiplier = 1,
   layoutPreset = "default",
@@ -452,10 +481,11 @@ export default function BackgroundParadogs({
       maxCount,
       maxCountMobile,
       containWithinViewport,
-      avoidSelector
+      avoidSelector,
+      mobileSizeScale
     );
     setCollisionPositions(next);
-  }, [imagePaths, count, sizeScale, densityMultiplier, layoutPreset, minCountMobile, maxCount, maxCountMobile, containWithinViewport, avoidSelector]);
+  }, [imagePaths, count, sizeScale, mobileSizeScale, densityMultiplier, layoutPreset, minCountMobile, maxCount, maxCountMobile, containWithinViewport, avoidSelector]);
 
   useLayoutEffect(() => {
     if (placementMode !== "collisionFree") return;
@@ -529,6 +559,10 @@ export default function BackgroundParadogs({
   const minPx = Math.round(SIZE_MIN_PX * sizeMultiplier);
   const maxPx = Math.round(SIZE_MAX_PX * sizeMultiplier);
   const vwNum = Number((SIZE_VW * sizeMultiplier).toFixed(1));
+  const desktopSize = `clamp(${minPx}px, ${vwNum}vw, ${maxPx}px)`;
+  const mobileMultiplier = (mobileSizeScale ?? sizeScale) * (placementMode === "collisionFree" ? ABOUT_SIZE_BOOST : 1);
+  const mobileSize = mobileSizeScale == null ? desktopSize :
+    `clamp(${Math.round(SIZE_MIN_PX * mobileMultiplier)}px, ${SIZE_VW * mobileMultiplier}vw, ${Math.round(SIZE_MAX_PX * mobileMultiplier)}px)`;
 
   const isAbout = placementMode === "collisionFree";
   const opacity = isAbout ? OPACITY_ABOUT : OPACITY;
@@ -579,15 +613,15 @@ export default function BackgroundParadogs({
           <div
             key={i}
             {...(isAbout ? { "data-about-bg": "true" as const } : {})}
-            className="absolute md:will-change-transform"
+            className="absolute h-[var(--paradog-mobile-size)] w-[var(--paradog-mobile-size)] md:h-[var(--paradog-size)] md:w-[var(--paradog-size)] md:will-change-transform"
             style={{
               left: usePx ? item.x : `${item.x}%`,
               top: usePx ? item.y : `${item.y}%`,
               transform: `translate(-50%, -50%) rotate(${item.rotate}deg) scale(${item.scale})`,
-              width: `clamp(${minPx}px, ${vwNum}vw, ${maxPx}px)`,
-              height: `clamp(${minPx}px, ${vwNum}vw, ${maxPx}px)`,
+              "--paradog-size": desktopSize,
+              "--paradog-mobile-size": mobileSize,
               opacity: isAbout ? 1 : opacity,
-            }}
+            } as CSSProperties}
           >
             <img
               src={item.src}
