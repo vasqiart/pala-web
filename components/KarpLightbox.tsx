@@ -2,18 +2,6 @@
 
 import { useEffect, useCallback, useState } from "react";
 
-/** 後で等倍／最大表示に切替えるときはここを変更 */
-const LIGHTBOX_SIZE_MODE = "contain" as const;
-
-function getLightboxImageClassName(): string {
-  switch (LIGHTBOX_SIZE_MODE) {
-    case "contain":
-      return "block h-full w-full max-h-[82vh] max-w-full object-contain rounded-2xl";
-    default:
-      return "block h-full w-full max-h-[82vh] max-w-full object-contain rounded-2xl";
-  }
-}
-
 type Props = {
   src: string;
   alt: string;
@@ -32,6 +20,23 @@ export default function KarpLightbox({
   onNext,
 }: Props) {
   const [mounted, setMounted] = useState(false);
+  const [imageSize, setImageSize] = useState<{ src: string; width: number; height: number } | null>(null);
+  const [viewport, setViewport] = useState({ width: 0, height: 0, density: 1 });
+
+  useEffect(() => {
+    if (!open) return;
+    const update = () => setViewport({ width: window.innerWidth, height: window.innerHeight, density: window.devicePixelRatio || 1 });
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, [open]);
+
+  const loaded = imageSize?.src === src && viewport.width > 0;
+  const scale = loaded ? Math.min(
+    1 / viewport.density,
+    (Math.min(viewport.width * (viewport.width >= 640 ? 0.88 : 0.94), 1100) - 20) / imageSize.width,
+    (viewport.height * 0.82 - 20) / imageSize.height,
+  ) : 0;
 
   const handleKeydown = useCallback(
     (e: KeyboardEvent) => {
@@ -91,11 +96,17 @@ export default function KarpLightbox({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex max-h-[calc(82vh-20px)] min-h-0 flex-1 overflow-hidden rounded-2xl">
+        <div className="flex max-h-[calc(82vh-20px)] min-h-0 overflow-hidden rounded-2xl">
           <img
+            key={src}
             src={src}
             alt={alt}
-            className={getLightboxImageClassName()}
+            className="block object-contain rounded-2xl"
+            style={{ width: loaded ? imageSize.width * scale : 1, height: loaded ? imageSize.height * scale : 1, visibility: loaded ? "visible" : "hidden" }}
+            onLoad={(event) => {
+              const image = event.currentTarget;
+              setImageSize({ src, width: image.naturalWidth, height: image.naturalHeight });
+            }}
             draggable={false}
           />
         </div>

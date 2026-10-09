@@ -30,7 +30,7 @@ export default function KarpGallery({ images, onSelect }: Props) {
             key={img.id}
             type="button"
             onClick={() => onSelect(index)}
-            className="group relative w-full overflow-hidden rounded-2xl bg-white/95 transition-transform transition-shadow duration-200 ease-out hover:-translate-y-2 hover:shadow-[0_12px_48px_rgba(0,0,0,0.12)] focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+            className={`group relative w-full lg:w-4/5 lg:justify-self-center overflow-hidden rounded-2xl bg-white/95 transition-transform transition-shadow duration-200 ease-out hover:-translate-y-2 hover:shadow-[0_12px_48px_rgba(0,0,0,0.12)] focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0`}
             style={{
               boxShadow: "0 8px 40px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04)",
             }}
