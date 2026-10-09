@@ -21,7 +21,7 @@ export const STORIES: Story[] = [{
   name: "ぱらどっぐ",
   handle: "@PLTR_Dog",
   avatar: "/images/stories/profiles/pltr-dog.png",
-  quote: "全財産を捧げよ",
+  quote: "全財産を捧げた",
   quoteUnderlineColor: "#BA55D3",
   paragraphs: [
     "Peter Thielの「ZERO to ONE」を読んで、ずっと彼をウォッチしていました。\nその彼がPalantirという創業するというニュースを聞いたのがこの企業を知ったきっかけです。\nPalantirへの投資を決めた理由は、上場後にAlex Karpのインタビューを初めて聞いた時でした。\nPeter ThielとAlex Karp、この二人は当時のテック企業のCEOたちとは何か異質だと感じたことが決め手です。",
